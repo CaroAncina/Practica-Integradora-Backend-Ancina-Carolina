@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+
+<body>
+    <h1>Chat </h1>
+
+    <div id="chat-messages">
+        {{#each messages}}
+        <p><strong>{{user}}</strong>: {{message}}</p>
+        {{/each}}
+    </div>
+
+    <form id="chat-form">
+        <input type="text" id="user" name="user" placeholder="Tu correo">
+        <input type="text" id="message" name="message" placeholder="Escribe un mensaje">
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/chat.js"></script>
+
+</body>
+
+</html>

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import productsModel from "../models/products.model.js";
+import productsModel from '../dao/models/products.model.js';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        const products = await productsModel.find();
+        const products = await productsModel.find().lean();
         res.status(200).json({ result: "success", payload: products });
     } catch (error) {
         console.error("Error al obtener productos:", error);

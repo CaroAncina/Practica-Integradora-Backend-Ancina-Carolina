@@ -1,0 +1,112 @@
+[
+    {
+        "id": 1,
+        "title": "Torta casamiento",
+        "description": "Nueva descripción",
+        "price": 6600,
+        "thumbnail": "ruta/imagenA.jpg",
+        "code": "B001",
+        "stock": 2,
+        "status": true,
+        "category": "Postres"
+    },
+    {
+        "id": 2,
+        "title": "Tarta frutal",
+        "description": "Descripción del producto",
+        "price": 4800,
+        "thumbnail": "ruta/imagenB.jpg",
+        "code": "B002",
+        "stock": 3,
+        "status": true,
+        "category": "Tartas"
+    },
+    {
+        "id": 3,
+        "title": "Lemon Pie",
+        "description": "Descripción del producto",
+        "price": 4000,
+        "thumbnail": "ruta/imagenC.jpg",
+        "code": "B003",
+        "stock": 2,
+        "status": true,
+        "category": "Tartas"
+    },
+    {
+        "id": 4,
+        "title": "Pan dulce",
+        "description": "Descripción del producto",
+        "price": 4500,
+        "thumbnail": "ruta/imagenD.jpg",
+        "code": "B004",
+        "stock": 6,
+        "status": true,
+        "category": "Variedades"
+    },
+    {
+        "id": 5,
+        "title": "Budin",
+        "description": "Descripción del producto",
+        "price": 2500,
+        "thumbnail": "ruta/imagenE.jpg",
+        "code": "B005",
+        "stock": 8,
+        "status": true,
+        "category": "Variedades"
+    },
+    {
+        "id": 6,
+        "title": "Rosca de Pascua",
+        "description": "Descripción del producto",
+        "price": 2800,
+        "thumbnail": "ruta/imagenF.jpg",
+        "code": "B006",
+        "stock": 6,
+        "status": true,
+        "category": "Variedades"
+    },
+    {
+        "id": 7,
+        "title": "Muffins",
+        "description": "Descripción del producto",
+        "price": 4800,
+        "thumbnail": "ruta/imagenG.jpg",
+        "code": "B007",
+        "stock": 12,
+        "status": true,
+        "category": "Variedades"
+    },
+    {
+        "id": 8,
+        "title": "Cookies",
+        "description": "Descripción del producto",
+        "price": 4000,
+        "thumbnail": "ruta/imagenH.jpg",
+        "code": "B008",
+        "stock": 12,
+        "status": true,
+        "category": "Variedades"
+    },
+    {
+        "id": 9,
+        "title": "Torta Marquise",
+        "description": "Descripción del producto",
+        "price": 8200,
+        "thumbnail": "ruta/imagenI.jpg",
+        "code": "B009",
+        "stock": 2,
+        "status": true,
+        "category": "Tortas"
+    },
+    {
+        "id": 10,
+        "title": "Cheesecake",
+        "description": "Descripcion del producto",
+        "price": "7000",
+        "thumbnail": "",
+        "code": "B010",
+        "stock": "3",
+        "status": true,
+        "category": "Postres"
+    }
+]
