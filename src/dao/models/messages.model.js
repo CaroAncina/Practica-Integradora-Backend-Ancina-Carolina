@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const messagesCollection = "Mensajes"
 
 const messagesSchema = new mongoose.Schema({
-    user: { type: String },
-    message: { type: String },
+    user: { type: String, required: true },
+    message: { type: String, required: true }
 })
 
 const messagesModel = mongoose.model(messagesCollection, messagesSchema)

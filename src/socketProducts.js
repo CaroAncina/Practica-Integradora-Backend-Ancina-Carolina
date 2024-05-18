@@ -1,9 +1,11 @@
 import productsModel from '../src/dao/models/products.model.js';
+import messagesModel from '../src/dao/models/messages.model.js';
 
 export default (io) => {
     io.on('connection', (socket) => {
         console.log('Usuario conectado');
 
+        //REALTIMEPRODUCTS
         productsModel.find().lean().then((productos) => {
             socket.emit('productos', productos);
         });
@@ -29,6 +31,22 @@ export default (io) => {
                 })
                 .catch((error) => {
                     socket.emit('respuestaDelete', 'Error al eliminar el producto: ' + error.message);
+                });
+        });
+
+        //CHAT
+        messagesModel.find().then((mensajes) => {
+            socket.emit('mensajes', mensajes);
+        });
+
+        socket.on('nuevoMensaje', (mensaje) => {
+            messagesModel.create(mensaje)
+                .then(() => messagesModel.find().lean())
+                .then((mensajes) => {
+                    io.emit('mensajes', mensajes);
+                })
+                .catch((error) => {
+                    console.error('Error al guardar el mensaje:', error);
                 });
         });
 

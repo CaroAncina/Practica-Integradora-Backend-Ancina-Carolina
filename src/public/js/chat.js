@@ -7,17 +7,23 @@ chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const user = document.getElementById('user').value;
     const message = document.getElementById('message').value;
+    
+    socket.emit('nuevoMensaje', { user, message });
 
-    if (user && message) {
-        socket.emit('nuevoMensaje', { user, message });
-    }
+    document.getElementById('message').value = '';
 });
 
-socket.on('mensajes', (messages) => {
+socket.on('mensajes', (mensajes) => {
     chatMessages.innerHTML = '';
-    messages.forEach((msg) => {
-        const p = document.createElement('p');
-        p.innerHTML = `<strong>${msg.user}</strong>: ${msg.message}`;
-        chatMessages.appendChild(p);
+    mensajes.forEach(({ user, message }) => {
+        const messageElement = document.createElement('p');
+        messageElement.innerHTML = `<strong>${user}</strong>: ${message}`;
+        chatMessages.appendChild(messageElement);
     });
+});
+
+socket.on('nuevoMensaje', (mensaje) => {
+    const messageElement = document.createElement('p');
+    messageElement.innerHTML = `<strong>${mensaje.user}</strong>: ${mensaje.message}`;
+    chatMessages.appendChild(messageElement);
 });

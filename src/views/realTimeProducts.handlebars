@@ -1,4 +1,5 @@
-<div>
+<div id="form_style">
+
     <h2>Agregar Nuevo Producto</h2>
     <form id="add-product-form">
         <label for="title">Título:</label>
@@ -20,13 +21,12 @@
         <input type="text" id="category" name="category" required><br>
 
         <label for="thumbnail">Imagen:</label>
-        <input type="text" id="thumbnail" name="thumbnail"> 
+        <input type="text" id="thumbnail" name="thumbnail">
 
         <button type="button" id="btnEnviar">Enviar</button>
     </form>
     <div id="listaProductos"></div>
 </div>
-
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realTimeProducts.js"></script>

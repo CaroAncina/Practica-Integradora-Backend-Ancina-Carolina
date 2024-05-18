@@ -35,7 +35,6 @@ app.use('/api/carts', cartsRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/', viewsRouter);
 
-
 const httpServer = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
