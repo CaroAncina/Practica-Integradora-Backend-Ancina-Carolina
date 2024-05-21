@@ -2,7 +2,6 @@
 
 Se agrega modelo de persistencia de Mongo y mongoose al proyecto. 
 
-
 1. *Seguimos utilizando realTimeProducts para ver los productos en tiempo real con websocket, agregar y eliminar los mismos.*
 ![alt text](./src/public/js/img%20readme/image.png)
 
