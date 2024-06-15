@@ -3,7 +3,7 @@ import passport from 'passport';
 
 const router = Router();
 
- router.post('/register', passport.authenticate('register', { failureRedirect: 'failregister' }), async (req, res) => {
+router.post('/register', passport.authenticate('register', { failureRedirect: 'failregister' }), async (req, res) => {
     res.redirect('/login');
 });
 
@@ -18,6 +18,8 @@ router.post('/login', passport.authenticate('login', { failureRedirect: 'faillog
         last_name: req.user.last_name,
         email: req.user.email,
         age: req.user.age,
+        cart: req.user.cart,
+        role: req.user.role
     };
     res.redirect('/products');
 });
@@ -38,12 +40,12 @@ router.get('/logout', (req, res) => {
         if (err) return res.status(500).send('Error al cerrar sesión');
         res.redirect('/login');
     });
-}); 
+});
 
-router.get("/github", passport.authenticate("github",{scope:["user:email"]}),async(req,res)=>{})
+router.get("/github", passport.authenticate("github", { scope: ["user:email"] }), async (req, res) => { })
 
-router.get("/githubcallback",passport.authenticate("github",{failureRedirect:"/login"}),async(req,res)=>{
-    req.session.user=req.user
+router.get("/githubcallback", passport.authenticate("github", { failureRedirect: "/login" }), async (req, res) => {
+    req.session.user = req.user
     res.redirect("/")
 })
 

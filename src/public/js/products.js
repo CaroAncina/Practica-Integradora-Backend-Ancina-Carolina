@@ -1,16 +1,14 @@
-//función para agregar un producto a un carrito 
+// Función para agregar un producto a un carrito
 async function addToCart(pid) {
-    const cid = '6655256f06492c2a8e4153b8'; 
-    const url = `http://localhost:8080/api/carts/${cid}/product/${pid}`;
-
     try {
-        const response = await fetch(url, {
-            method: 'POST'
+        const response = await fetch(`/api/carts/add-to-cart/${pid}`, {
+            method: 'POST',
+            credentials: 'same-origin' // Para enviar las cookies de sesión al servidor
         });
 
         if (response.ok) {
             const data = await response.json();
-            console.log('Producto agregado al carrito:', data);
+            console.log(data.message);
             alert('Producto agregado al carrito con éxito');
         } else {
             throw new Error('Error al agregar el producto al carrito');
@@ -21,7 +19,7 @@ async function addToCart(pid) {
     }
 }
 
-//función para mostrar detalles del producto
-function showDetails(productId) {
+// Función para mostrar detalles del producto
+async function showDetails(productId) {
     window.location.href = `/products/${productId}`;
 }

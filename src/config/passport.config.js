@@ -1,7 +1,8 @@
-import passport from "passport";
+import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import GitHubStrategy from 'passport-github2';
 import userService from '../dao/models/users.model.js';
+import cartsModel from '../dao/models/carts.model.js';
 import { createHash, isValidPassword } from "../utils.js";
 
 const initializePassport = () => {
@@ -14,12 +15,14 @@ const initializePassport = () => {
                 if (user) {
                     return done(null, false, { message: 'El usuario ya existe' });
                 }
+                const newCart = await cartsModel.create({});
                 const newUser = {
                     first_name,
                     last_name,
                     age,
                     email,
-                    password: createHash(password)
+                    password: createHash(password),
+                    cart: newCart._id
                 };
                 let result = await userService.create(newUser);
                 return done(null, result);
@@ -33,7 +36,7 @@ const initializePassport = () => {
         { usernameField: 'email' },
         async (email, password, done) => {
             try {
-                let user = await userService.findOne({ email });
+                let user = await userService.findOne({ email }).populate('cart');
                 if (!user) {
                     return done(null, false, { message: 'Usuario no encontrado' });
                 }
@@ -53,15 +56,16 @@ const initializePassport = () => {
         callbackURL: "http://localhost:8080/api/sessions/githubcallback"
     }, async (accessToken, refreshToken, profile, done) => {
         try {
-            console.log(profile);
-            let user = await userService.findOne({ email: profile._json.email });
+            let user = await userService.findOne({ email: profile._json.email }).populate('cart');
             if (!user) {
+                const newCart = await cartsModel.create({});
                 let newUser = {
                     first_name: profile._json.name || profile.username,
                     last_name: "",
                     age: 27,
                     email: profile._json.email || `${profile.username}@github.com`,
-                    password: ""
+                    password: "",
+                    cart: newCart._id
                 };
                 let result = await userService.create(newUser);
                 done(null, result);
@@ -78,7 +82,7 @@ const initializePassport = () => {
     });
 
     passport.deserializeUser(async (id, done) => {
-        let user = await userService.findById(id);
+        let user = await userService.findById(id).populate('cart');
         done(null, user);
     });
 }

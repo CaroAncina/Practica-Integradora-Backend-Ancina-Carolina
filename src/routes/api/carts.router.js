@@ -42,12 +42,17 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Agrega un producto existente a un carrito
-router.post('/:cid/product/:pid', async (req, res) => {
+// Agrega un producto existente a un carrito del usuario logueado
+router.post('/add-to-cart/:pid', async (req, res) => {
     try {
-        const { cid, pid } = req.params;
+        const pid = req.params.pid;
+        const user = req.user;
 
-        const cart = await cartsModel.findById(cid);
+        if (!user || !user.cart) {
+            return res.status(400).json({ error: 'Usuario no logueado o carrito no encontrado' });
+        }
+
+        const cart = await cartsModel.findById(user.cart._id);
         if (!cart) {
             return res.status(404).json({ error: 'Carrito no encontrado' });
         }
@@ -61,7 +66,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
         await cart.save();
 
-        return res.status(200).json(cart);
+        return res.status(200).json({ message: 'Producto agregado al carrito con éxito', cart });
     } catch (error) {
         console.error('Error al agregar el producto al carrito:', error);
         return res.status(500).json({ error: 'Error al agregar el producto al carrito' });
