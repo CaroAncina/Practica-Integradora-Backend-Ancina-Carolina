@@ -1,0 +1,42 @@
+<div>
+    {{#if user}}
+    <p>Bienvenido, {{user.first_name}}! Aquí están nuestros productos.</p>
+    {{else}}
+    <p>Por favor, <a href="/login">inicie sesión</a> para ver nuestros productos.</p>
+    {{/if}}
+
+</div>
+
+{{#if isValid}}
+<div>
+    <h1>Productos</h1>
+    {{#each docs}}
+    <div>
+        <h2>{{this.title}}</h2>
+        <p>Descripción: {{this.description}}</p>
+        <p>Precio: ${{this.price}}</p>
+        <p>Categoria: {{this.category}}</p>
+        <button onclick="showdetails('{{this._id}}')">Ver detalles</button>
+        <button onclick="addToCart('{{this._id}}')">Agregar al carrito</button>
+    </div>
+    {{/each}}
+</div>
+
+<div>
+    {{#if hasPrevPage}}
+    <a href="{{prevLink}}">&lt;&lt; Anterior</a>
+    {{/if}}
+    &nbsp;
+    Página {{page}} de {{totalPages}}
+    &nbsp;
+    {{#if hasNextPage}}
+    <a href="{{nextLink}}">Siguiente &gt;&gt;</a>
+    {{/if}}
+</div>
+
+{{else}}
+<p>No hay productos para mostrar</p>
+{{/if}}
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/products.js"></script>

@@ -8,6 +8,12 @@
 </head>
 
 <body>
+    <header>
+        {{#if user}}
+        <p>Bienvenido, {{user.first_name}} {{user.last_name}} ({{user.role}}) | <a href="/api/sessions/logout">Cerrar
+                sesión</a> | <a href="/profile">Perfil</a></p>
+        {{/if}}
+    </header>
     {{{ body}}}
 </body>
 
