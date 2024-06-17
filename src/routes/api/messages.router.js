@@ -5,7 +5,7 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        const messages = await Message.find().lean();
+        const messages = await Message.find().populate('user', 'first_name last_name').lean();
         res.send({ result: "success", payload: messages });
     } catch (error) {
         console.error('Error al obtener los mensajes:', error);

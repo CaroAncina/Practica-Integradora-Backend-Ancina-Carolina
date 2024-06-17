@@ -1,9 +1,19 @@
-<h2>Perfil de Usuario</h2>
-<p>Nombre: {{user.first_name}}</p>
-<p>Apellido: {{user.last_name}}</p>
-<p>Email: {{user.email}}</p>
-<p>Edad: {{user.age}}</p>
-<form action="/api/sessions/logout" method="POST">
-    <button type="submit">Cerrar Sesión</button>
-</form>
-<a href="/products">Ir a Productos</a>
+<div>
+    <h2>Perfil de Usuario</h2>
+    <p>Nombre: {{user.first_name}}</p>
+    <p>Apellido: {{user.last_name}}</p>
+    <p>Email: {{user.email}}</p>
+    <p>Edad: {{user.age}}</p>
+</div>
+
+<div>
+    <button onclick="showProducts()">Ir a los productos</button>
+
+    <button onclick="showCart('{{user.cart._id}}')">Ir al carrito</button>
+
+    <form action="/api/sessions/logout" method="POST">
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+</div>
+
+<script src="/js/carts.js"></script>

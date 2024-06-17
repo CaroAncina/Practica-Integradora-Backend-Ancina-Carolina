@@ -1,9 +1,9 @@
 // Función para agregar un producto a un carrito
 async function addToCart(pid) {
     try {
-        const response = await fetch(`/api/carts/add-to-cart/${pid}`, {
+        const response = await fetch(`/api/carts/product/${pid}`, {
             method: 'POST',
-            credentials: 'same-origin' // Para enviar las cookies de sesión al servidor
+            credentials: 'same-origin' 
         });
 
         if (response.ok) {

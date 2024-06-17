@@ -3,7 +3,7 @@ import productsModel from '../../dao/models/products.model.js';
 
 const router = Router();
 
-//muestra los productos 
+//Muestra los productos 
 router.get("/", async (req, res) => {
     try {
         let query = {};
@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
         }
 
         //limite 
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || 5;
         const page = parseInt(req.query.page) || 1;
 
         const options = {
@@ -72,7 +72,7 @@ router.get('/:pid', async (req, res) => {
     }
 });
 
-//agrega un producto a la lista de productos
+//Agrega un producto a la lista de productos
 router.post('/', async (req, res) => {
     const { title, description, price, code, stock, category } = req.body;
     if (!title || !description || !price || !code || !stock || !category) {
@@ -87,7 +87,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-//actualiza un producto
+//Actualiza un producto
 router.put('/:uid', async (req, res) => {
     const { uid } = req.params;
     const updatedProduct = req.body;
@@ -100,7 +100,7 @@ router.put('/:uid', async (req, res) => {
     }
 });
 
-//elimina un producto
+//Elimina un producto
 router.delete('/:uid', async (req, res) => {
     const { uid } = req.params;
     try {

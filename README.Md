@@ -1,21 +1,33 @@
 # **Practica integradora ecommerce**
 
-Se agrega modelo de persistencia de Mongo y mongoose al proyecto. 
-
-1. *Seguimos utilizando realTimeProducts para ver los productos en tiempo real con websocket, agregar y eliminar los mismos.*
-![alt text](./src/public/js/img%20readme/image.png)
-
-2. *Agregamos un chat en tiempo real con websocket*
-
-![alt text](./src/public/js/img%20readme/image-1.png)
-
+Al modelo de persistencia de Mongo y mongoose del proyecto, se agrega una implementacion de login.
 
 ## **Mongoose**
 
-*Contenemos los productos en la base de datos de Mongoose Atlas*
+Contenemos los productos en la base de datos de Mongoose Atlas
 
-![alt text](./src//public/js/img%20readme/image-2.png)
+ 1. *Se guardan los usuarios registrados*
+![alt text](<src/public/img readme/users.png>)
 
-*Ademas se guardan los mensajes del chat en la base de datos*
+ 2. *Se guardan las sessions del usuario*
+![alt text](<src/public/img readme/sessions_user.png>)
 
-![alt text](./src/public/js/img%20readme/image-3.png)
+ 3. *Se guardan los carritos de compra por cada usuario registrado*
+![alt text](<src/public/img readme/cart_user.png>)
+
+## **localhost:8080**
+
+1. *Accedemos como página principal al login de usuario(ya registrado).*
+![alt text](<src/public/img readme/login.png>)
+
+2. *Tenemos un panel de usuario*
+![alt text](<src/public/img readme/panel_user.png>)
+
+3. *La lista de productos funciona con un paginate*
+![alt text](<src/public/img readme/paginate.png>)
+
+4. *Podemos ver el detalle del carrito del usuario*
+![alt text](<src/public/img readme/product_details.png>)
+
+5. *Podemos acceder al perfil del usuario*
+![alt text](<src/public/img readme/profile.png>)

@@ -10,11 +10,15 @@
 <body>
     <header>
         {{#if user}}
-        <p>Bienvenido, {{user.first_name}} {{user.last_name}} ({{user.role}}) | <a href="/api/sessions/logout">Cerrar
-                sesión</a> | <a href="/profile">Perfil</a></p>
+        <p>
+            {{user.first_name}} {{user.last_name}} ({{user.role}}) | 
+            <a href="/api/sessions/logout">Cerrar sesión</a> | 
+            <a href="/profile">Perfil</a> | 
+            <a href="/carts/{{user.cart._id}}">Carro de compras</a>
+        </p>
         {{/if}}
     </header>
-    {{{ body}}}
+    {{{ body }}}
 </body>
 
 </html>

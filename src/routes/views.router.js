@@ -6,12 +6,14 @@ import { isAuthenticated, isNotAuthenticated } from '../middleware/auth.js';
 
 const router = Router();
 
+//Muestra pag. login
 router.get("/", (req, res) => {
     res.redirect('/login');
 });
 
+//Muestra pag.Productos
 router.get("/products", isAuthenticated, async (req, res) => {
-    let { page = 1, limit = 10, sort, category } = req.query;
+    let { page = 1, limit = 5, sort, category } = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
 
@@ -53,42 +55,33 @@ router.get('/products/:pid', async (req, res) => {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
 
-        res.render('productDetail', { product });
+        res.render('productDetails', { product });
     } catch (error) {
         console.error('Error al obtener los detalles del producto:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 
+//Muestra pag. realTimeProducts
 router.get('/realTimeProducts', (req, res) => {
     res.render('realtimeProducts', {});
 });
 
-router.get("/carts", async (req, res) => {
+//Muestra detalle del carrito
+router.get('/carts/:cid', async (req, res) => {
     try {
-        const carts = await cartsModel.find().populate('products').lean();
-        res.render("carts", { carts });
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-router.get("/carts/:cid", async (req, res) => {
-    try {
-        const cartId = req.params.cid;
-        const cart = await cartsModel.findById(cartId).populate('products.product').lean();
-
+        const cart = await cartsModel.findById(req.params.cid).populate('products.product').lean();
         if (!cart) {
             return res.status(404).json({ error: 'Carrito no encontrado' });
         }
-        res.render('cartProducts', { cart: cart });
-
+        res.render('cartDetails', { cart });
     } catch (error) {
         console.error('Error al obtener el carrito:', error);
-        return res.status(500).json({ error: 'Error interno del servidor' });
+        res.status(500).json({ error: 'Error al obtener el carrito' });
     }
 });
 
+//Muestra chat
 router.get('/chat', async (req, res) => {
     try {
         const messages = await messagesModel.find().lean();
