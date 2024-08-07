@@ -3,7 +3,7 @@ async function addToCart(pid) {
     try {
         const response = await fetch(`/api/carts/product/${pid}`, {
             method: 'POST',
-            credentials: 'same-origin' 
+            credentials: 'same-origin'
         });
 
         if (response.ok) {
@@ -18,6 +18,7 @@ async function addToCart(pid) {
         alert('Error al agregar el producto al carrito');
     }
 }
+
 
 // Función para mostrar detalles del producto
 async function showDetails(productId) {

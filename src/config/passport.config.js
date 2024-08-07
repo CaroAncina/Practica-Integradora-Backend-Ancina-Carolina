@@ -1,9 +1,9 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import GitHubStrategy from 'passport-github2';
-import userService from '../dao/models/users.model.js';
-import cartsModel from '../dao/models/carts.model.js';
-import { createHash, isValidPassword } from "../utils.js";
+import userService from '../dao/models/usersModel.js';
+import cartsModel from '../dao/models/cartsModel.js';
+import { createHash, isValidPassword } from './../utils/utils.js';
 
 const initializePassport = () => {
     passport.use('register', new LocalStrategy(
@@ -15,15 +15,32 @@ const initializePassport = () => {
                 if (user) {
                     return done(null, false, { message: 'El usuario ya existe' });
                 }
-                const newCart = await cartsModel.create({});
-                const newUser = {
-                    first_name,
-                    last_name,
-                    age,
-                    email,
-                    password: createHash(password),
-                    cart: newCart._id
-                };
+
+                const role = email === 'adminCoder@coder.com' ? 'admin' : 'user';
+
+                let newUser;
+                if (role === 'admin') {
+                    newUser = {
+                        first_name,
+                        last_name,
+                        age,
+                        email,
+                        password: createHash(password),
+                        role
+                    };
+                } else {
+                    const newCart = await cartsModel.create({});
+                    newUser = {
+                        first_name,
+                        last_name,
+                        age,
+                        email,
+                        password: createHash(password),
+                        cart: newCart._id,
+                        role
+                    };
+                }
+
                 let result = await userService.create(newUser);
                 return done(null, result);
             } catch (error) {
@@ -85,6 +102,6 @@ const initializePassport = () => {
         let user = await userService.findById(id).populate('cart');
         done(null, user);
     });
-}
+};
 
 export default initializePassport;

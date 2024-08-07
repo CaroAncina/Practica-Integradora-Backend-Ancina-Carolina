@@ -8,8 +8,11 @@
 
 <div>
     <button onclick="showProducts()">Ir a los productos</button>
-
-    <button onclick="showCart('{{user.cart._id}}')">Ir al carrito</button>
+    {{#if (eq user.role 'admin')}}
+        <button onclick="location.href='/realTimeProducts'">Administrar Productos</button>
+    {{else}}
+        <button onclick="showCart('{{user.cart._id}}')">Ir al carrito</button>
+    {{/if}}
 
     <form action="/api/sessions/logout" method="POST">
         <button type="submit">Cerrar Sesión</button>
@@ -17,3 +20,12 @@
 </div>
 
 <script src="/js/carts.js"></script>
+<script>
+    function showProducts() {
+        window.location.href = '/products';
+    }
+
+    function showCart(cartId) {
+        window.location.href = '/carts/' + cartId;
+    }
+</script>

@@ -9,9 +9,12 @@
         </li>
         {{/each}}
     </ul>
+    <button id="purchaseButton">Realizar compra</button>
     {{else}}
     <p>No hay productos en este carrito.</p>
     {{/if}}
+    <input type="hidden" id="cartId" value="{{cart._id}}">
+    <button onclick="location.href='/products'">Volver a productos</button>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
