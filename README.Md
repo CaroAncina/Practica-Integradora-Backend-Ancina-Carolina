@@ -1,33 +1,55 @@
 # **Practica integradora ecommerce**
 
-Al modelo de persistencia de Mongo y mongoose del proyecto, se agrega una implementacion de login.
+Al modelo de persistencia de Mongo y mongoose del proyecto, se agrega: implementación de login, arquitectura por capas, patrones de diseño, servicio de mailing, manejo de variables de entorno.
 
 ## **Mongoose**
 
-Contenemos los productos en la base de datos de Mongoose Atlas
+En la base de datos de Mongoose Atlas se pueden encontrar:
 
- 1. *Se guardan los usuarios registrados*
-![alt text](<src/public/img readme/users.png>)
+- usuarios
+- productos
+- carros de compra
+- mensajes de chat
+- inicios de sesión
+- tickets de compra
 
- 2. *Se guardan las sessions del usuario*
-![alt text](<src/public/img readme/sessions_user.png>)
+![alt text](<src/public/img readme/mongo1.png>)
 
- 3. *Se guardan los carritos de compra por cada usuario registrado*
-![alt text](<src/public/img readme/cart_user.png>)
+![alt text](<src/public/img readme/mongo2.png>)
 
-## **localhost:8080**
+## **Handlebars**
 
-1. *Accedemos como página principal al login de usuario(ya registrado).*
-![alt text](<src/public/img readme/login.png>)
+1. _Accedemos como página principal al login de usuario(ya registrado)._
+   ![alt text](<src/public/img readme/loggin.png>)
 
-2. *Tenemos un panel de usuario*
-![alt text](<src/public/img readme/panel_user.png>)
+2. _Tenemos un panel de usuario_
+   ![alt text](<src/public/img readme/user panel.png>)
 
-3. *La lista de productos funciona con un paginate*
-![alt text](<src/public/img readme/paginate.png>)
+3. _Podemos ver el detalle del carrito del usuario_
+   ![alt text](<src/public/img readme/cart.png>)
 
-4. *Podemos ver el detalle del carrito del usuario*
-![alt text](<src/public/img readme/product_details.png>)
+4. _Podemos acceder al perfil del usuario_
+   ![alt text](<src/public/img readme/profile.png>)
 
-5. *Podemos acceder al perfil del usuario*
-![alt text](<src/public/img readme/profile.png>)
+5. _Podemos ver el chat para enviar mensajes_
+   ![alt text](<src/public/img readme/chat.png>)
+
+6. _Se agrega un user **"Premium"** que puede acceder a la pagina para crear, actualizar y eliminar productos._
+   ![alt text](<src/public/img readme/user premium.png>)
+
+## **Mailing**
+
+Se utiliza el servicio de nodemailer, para luego de finalizar la compra, el usuario, reciba un correo electronico con la confirmación de la misma.
+
+![alt text](<src/public/img readme/email compra.png>)
+
+## **Postman**
+
+![alt text](<src/public/img readme/postman.png>)
+
+Todos los endpoint se pueden verificar a tráves de POSTMAN.
+
+![alt text](<src/public/img readme/endpoints-postman.png>)
+
+_Se adjunta link con la documentación completa:_
+[Endpoints Backend](https://documenter.getpostman.com/view/34227122/2sA3s1osHX)
