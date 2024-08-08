@@ -1,4 +1,5 @@
 import { userDto } from "../dao/DTOs/users.dto.js";
+import logger from "../utils/logger.js";
 
 class SessionsController {
   async register(req, res) {
@@ -14,6 +15,7 @@ class SessionsController {
       return res
         .status(400)
         .send({ status: "error", error: "Datos incompletos" });
+
     req.session.user = {
       _id: req.user._id,
       first_name: req.user.first_name,
@@ -23,7 +25,14 @@ class SessionsController {
       cart: req.user.cart,
       role: req.user.role,
     };
-    res.redirect("/products");
+
+    req.session.save((err) => {
+      if (err) {
+        logger.error("Error guardando sesión:", err);
+        return res.status(500).send("Error al guardar la sesión");
+      }
+      res.redirect("/products");
+    });
   }
 
   async failLogin(req, res) {

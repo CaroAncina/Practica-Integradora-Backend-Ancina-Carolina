@@ -1,7 +1,7 @@
 import CartService from "../services/cartsService.js";
 import ProductModel from "../dao/models/productsModel.js";
 import ticketsService from "../services/ticketsService.js";
-import { sendPurchaseEmail } from "../services/mailer.js";
+import { sendPurchaseEmail } from "../utils/mailer.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/EErrors.js";
 import { generateCartErrorInfo } from "../services/errors/Info.js";
