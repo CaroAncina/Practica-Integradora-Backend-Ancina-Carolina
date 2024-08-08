@@ -8,7 +8,7 @@
 
 <div>
     <button onclick="showProducts()">Ir a los productos</button>
-    {{#if (eq user.role 'admin')}}
+    {{#if (eq user.role 'premium')}}
         <button onclick="location.href='/realTimeProducts'">Administrar Productos</button>
     {{else}}
         <button onclick="showCart('{{user.cart._id}}')">Ir al carrito</button>

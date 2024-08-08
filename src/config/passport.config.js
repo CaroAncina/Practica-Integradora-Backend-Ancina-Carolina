@@ -16,10 +16,10 @@ const initializePassport = () => {
                     return done(null, false, { message: 'El usuario ya existe' });
                 }
 
-                const role = email === 'adminCoder@coder.com' ? 'admin' : 'user';
+                const role = email === 'acoderhouse@gmail.com' ? 'premium' : 'user';
 
                 let newUser;
-                if (role === 'admin') {
+                if (role === 'premium') {
                     newUser = {
                         first_name,
                         last_name,

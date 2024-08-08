@@ -2,7 +2,7 @@ import UsersMongoDAO from "../dao/models/usersModel.js";
 import CartsMongoDAO from "../dao/models/cartsModel.js";
 import ProductModel from "../dao/models/productsModel.js";
 import ticketsService from "./ticketsService.js";
-import { sendPurchaseEmail } from "../services/mailer.js";
+import { sendPurchaseEmail } from "../utils/mailer.js";
 import logger from "../utils/logger.js";
 
 class CartService {

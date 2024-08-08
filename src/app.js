@@ -13,9 +13,6 @@ import initializePassport from "./config/passport.config.js";
 import errorHandler from "./middleware/errorhandler.js";
 import logger from "./utils/logger.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // Importar Rutas
 import usersRoutes from "./routes/api/usersRouter.js";
 import cartsRouter from "./routes/api/cartsRouter.js";
@@ -29,6 +26,9 @@ import loggerTest from "./routes/api/loggerTest.js";
 
 const app = express();
 const PORT = process.env.PORT;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Middleware para JSON, URL y archivos estáticos
 app.use(express.json());
@@ -51,7 +51,7 @@ app.set("view engine", "handlebars");
 // Middleware de sesión
 app.use(
   session({
-    secret: "config.sessionSecret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB }),

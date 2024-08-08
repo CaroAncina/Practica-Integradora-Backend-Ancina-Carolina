@@ -38,7 +38,7 @@ class ViewsController {
   }
 
   getRealTimeProducts(req, res) {
-    if (req.session.user && req.session.user.role === "admin") {
+    if (req.session.user && req.session.user.role === "premium") {
       res.render("realTimeProducts", { user: req.session.user });
     } else {
       res.status(403).send("Acceso denegado");
@@ -86,6 +86,10 @@ class ViewsController {
 
   getProfilePage(req, res) {
     res.render("profile", { user: req.session.user });
+  }
+
+  getForgotPasswordPage(req, res) {
+    res.render("forgotPassword", { user: req.session.user });
   }
 }
 

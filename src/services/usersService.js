@@ -16,7 +16,7 @@ class UserService {
       userData.password = createHash(userData.password);
 
       if (userData.email === "acoderhouse@gmail.com") {
-        userData.role = "admin";
+        userData.role = "premium";
       } else {
         userData.role = "user";
         const newCart = await CartMongoDAO.create({ products: [] });
