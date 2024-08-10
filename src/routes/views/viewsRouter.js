@@ -28,5 +28,8 @@ router.get("/register", isNotAuthenticated, viewsController.getRegisterPage);
 router.get("/profile", isAuthenticated, viewsController.getProfilePage);
 router.get("/current", isAuthenticated, viewsController.currentPage);
 router.get("/forgot-password", viewsController.getForgotPasswordPage);
+router.post("/forgot-password", viewsController.handleForgotPassword);
+router.get("/reset-password/:token", viewsController.getResetPasswordPage);
+router.post("/reset-password/:token", viewsController.handleResetPassword);
 
 export default router;

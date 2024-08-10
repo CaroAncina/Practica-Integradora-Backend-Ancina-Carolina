@@ -10,6 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+//Correo para la compra
 export const sendPurchaseEmail = async (to, ticket) => {
   const mailOptions = {
     from: "acoderhouse@gmail.com",
@@ -24,6 +25,25 @@ export const sendPurchaseEmail = async (to, ticket) => {
     logger.info("Correo de confirmación enviado");
   } catch (error) {
     logger.error("Error al enviar el correo de confirmación:", error);
+    throw error;
+  }
+};
+
+//Correo para reestablecer contraseña
+export const sendResetPasswordEmail = async (to, resetUrl) => {
+  const mailOptions = {
+    from: "acoderhouse@gmail.com",
+    to: to,
+    subject: "Restablecer Contraseña",
+    text: `Haz clic en el siguiente enlace para restablecer tu contraseña: ${resetUrl}`,
+    html: `<p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p><a href="${resetUrl}">Restablecer Contraseña</a>`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    logger.info("Correo de restablecimiento enviado");
+  } catch (error) {
+    logger.error("Error al enviar el correo de restablecimiento:", error);
     throw error;
   }
 };
