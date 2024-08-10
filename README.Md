@@ -19,7 +19,7 @@ En la base de datos de Mongoose Atlas se pueden encontrar:
 
 ## **Handlebars**
 
-1. _Accedemos como página principal al login de usuario(ya registrado)._
+1. _Accedemos como página principal al login de usuario(ya registrado), además de un enlace para reestablecer la contraseña._
    ![alt text](<src/public/img readme/loggin.png>)
 
 2. _Tenemos un panel de usuario_
