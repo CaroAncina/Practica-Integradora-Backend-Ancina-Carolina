@@ -1,11 +1,13 @@
 {
-  "name": "desafio_9",
+  "name": "desafio_testing",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node --watch src/app.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "mocha 'test/**/*.test.js'"
   },
   "keywords": [],
   "author": "",
@@ -33,7 +35,14 @@
     "passport-local": "^1.0.0",
     "sessions": "^0.0.2-7",
     "socket.io": "^4.7.5",
+    "supertest": "^7.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^10.0.0",
     "winston": "^3.13.1"
+  },
+  "devDependencies": {
+    "chai": "^5.1.1",
+    "mocha": "^10.7.3"
   }
 }

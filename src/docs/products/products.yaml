@@ -1,0 +1,103 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtiene todos los productos
+      tags: 
+       - Products
+      responses:
+        "200":
+          description: Una lista de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+
+
+  /api/products/{id}:
+    get:
+      summary: Obtiene un producto por ID
+      tags: 
+       - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto obtenido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+    post:
+      summary: Crea un nuevo producto
+      tags: 
+       - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: Producto creado con éxito
+          
+    put:
+      summary: Actualiza un producto por ID
+      tags: 
+       - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "200":
+          description: Producto actualizado con éxito
+
+    delete:
+      summary: Elimina un producto por ID
+      tags: 
+       - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Producto eliminado con éxito
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        code:
+          type: string
+        stock:
+          type: number
+        category:
+          type: string
+        thumbnail:
+          type: string
