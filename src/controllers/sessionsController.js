@@ -1,5 +1,6 @@
 import { userDto } from "../dao/DTOs/users.dto.js";
 import logger from "../utils/logger.js";
+import User from "../dao/models/usersModel.js";
 
 class SessionsController {
   async register(req, res) {
@@ -26,13 +27,21 @@ class SessionsController {
       role: req.user.role,
     };
 
-    req.session.save((err) => {
-      if (err) {
-        logger.error("Error guardando sesión:", err);
-        return res.status(500).send("Error al guardar la sesión");
-      }
-      res.redirect("/products");
-    });
+    try {
+      req.user.last_connection = new Date(); // Actualiza last_connection  
+      await req.user.save();
+
+      req.session.save((err) => {
+        if (err) {
+          logger.error("Error guardando sesión:", err);
+          return res.status(500).send("Error al guardar la sesión");
+        }
+        res.redirect("/products");
+      });
+    } catch (error) {
+      logger.error("Error al actualizar last_connection:", error);
+      res.status(500).send("Error al iniciar sesión");
+    }
   }
 
   async failLogin(req, res) {
@@ -40,10 +49,24 @@ class SessionsController {
   }
 
   async logout(req, res) {
-    req.session.destroy((err) => {
-      if (err) return res.status(500).send("Error al cerrar sesión");
-      res.redirect("/login");
-    });
+    try {
+      const user = await User.findById(req.session.user._id);
+      if (user) {
+        user.last_connection = new Date();
+        await user.save();
+      }
+
+      req.session.destroy((err) => {
+        if (err) return res.status(500).send("Error al cerrar sesión");
+        res.redirect("/login");
+      });
+    } catch (error) {
+      logger.error(
+        "Error al actualizar last_connection durante logout:",
+        error
+      );
+      res.status(500).send("Error al cerrar sesión");
+    }
   }
 
   async github(req, res) {
@@ -60,7 +83,16 @@ class SessionsController {
       cart: req.user.cart,
       role: req.user.role,
     };
-    res.redirect("/products");
+
+    try {
+      req.user.last_connection = new Date(); // Actualiza last_connection 
+      await req.user.save();
+
+      res.redirect("/products");
+    } catch (error) {
+      logger.error("Error al actualizar last_connection con GitHub:", error);
+      res.status(500).send("Error al iniciar sesión con GitHub");
+    }
   }
 
   async current(req, res) {

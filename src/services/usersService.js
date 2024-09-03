@@ -4,6 +4,10 @@ import { createHash } from "../utils/utils.js";
 import logger from "../utils/logger.js";
 
 class UserService {
+  static async getUserById(uid) {
+    return await UserMongoDAO.findById(uid);
+  }
+
   static async createUser(userData) {
     try {
       const existingUser = await UserMongoDAO.findByEmail(userData.email);

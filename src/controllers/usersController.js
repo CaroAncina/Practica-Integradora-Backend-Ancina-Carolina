@@ -100,3 +100,40 @@ export const deleteUser = async (req, res) => {
       .json({ result: "error", error: "Error al eliminar usuario" });
   }
 };
+
+export const changeUserRole = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const user = await UserService.getUserById(uid);
+
+    if (!user) {
+      CustomError.createError({
+        name: "UserNotFoundError",
+        cause: `Usuario con ID ${uid} no encontrado`,
+        message: "Usuario no encontrado",
+        code: EErrors.ROUTING_ERROR,
+      });
+      return res
+        .status(404)
+        .json({ status: "error", message: "Usuario no encontrado" });
+    }
+
+    console.log(`Rol actual del usuario: ${user.role}`);
+    const newRole = user.role === "user" ? "premium" : "user";
+    user.role = newRole;
+    console.log(`Nuevo rol asignado: ${newRole}`);
+    logger.info(`Rol del usuario ${uid} cambiado a ${user.role}`);
+
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ status: "success", message: `Rol cambiado a ${user.role}` });
+  } catch (error) {
+    logger.error("Error al cambiar el rol del usuario:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Error al cambiar el rol del usuario",
+    });
+  }
+};

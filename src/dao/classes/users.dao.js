@@ -1,26 +1,30 @@
-import usersModel from '../models/usersModel.js';
+import usersModel from "../models/usersModel.js";
 
 class UserMongoDAO {
-    async findByEmail(email) {
-        return await usersModel.findOne({ email });
-    }
+  async findById(uid) {
+    return await usersModel.findById(uid);
+  }
 
-    async findAll() {
-        return await usersModel.find();
-    }
+  async findByEmail(email) {
+    return await usersModel.findOne({ email });
+  }
 
-    async create(userData) {
-        const newUser = new usersModel(userData);
-        return await newUser.save();
-    }
+  async findAll() {
+    return await usersModel.find();
+  }
 
-    async update(uid, updatedUser) {
-        return await usersModel.findByIdAndUpdate(uid, updatedUser, { new: true });
-    }
+  async create(userData) {
+    const newUser = new usersModel(userData);
+    return await newUser.save();
+  }
 
-    async delete(uid) {
-        return await usersModel.findByIdAndDelete(uid);
-    }
+  async update(uid, updatedUser) {
+    return await usersModel.findByIdAndUpdate(uid, updatedUser, { new: true });
+  }
+
+  async delete(uid) {
+    return await usersModel.findByIdAndDelete(uid);
+  }
 }
 
 export default new UserMongoDAO();
