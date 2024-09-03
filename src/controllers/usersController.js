@@ -137,3 +137,35 @@ export const changeUserRole = async (req, res) => {
     });
   }
 };
+
+export const uploadProfileImage = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const user = await UserService.getUserById(uid);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "Usuario no encontrado" });
+    }
+
+    // Guardar la referencia de la imagen de perfil en el usuario
+    user.profileImage = req.file.path; // O la ruta que corresponda
+    await user.save();
+
+    res
+      .status(200)
+      .json({
+        status: "success",
+        message: "Imagen de perfil actualizada",
+        profileImage: user.profileImage,
+      });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        status: "error",
+        message: "Error al actualizar la imagen de perfil",
+      });
+  }
+};
