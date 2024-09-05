@@ -104,6 +104,17 @@ class UserService {
       throw new Error("Error al eliminar usuario");
     }
   }
+
+  static async updateUserDocuments(uid, documents) {
+    const user = await UserMongoDAO.findById(uid);
+    if (!user) {
+      throw new Error("Usuario no encontrado");
+    }
+
+    user.documents = [...user.documents, ...documents];
+    await user.save();
+    return user;
+  }
 }
 
 export default UserService;

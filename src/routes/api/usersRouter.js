@@ -10,6 +10,7 @@ import {
 } from "../../controllers/usersController.js";
 import upload from "../../middleware/multer.js";
 import { uploadProfileImage } from "../../controllers/usersController.js";
+import { uploadDocuments } from "../../controllers/usersController.js";
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.post(
   upload.single("profile"),
   uploadProfileImage
 );
+router.post("/:uid/documents", upload.array("documents", 10), uploadDocuments);
 
 export default router;

@@ -118,13 +118,30 @@ export const changeUserRole = async (req, res) => {
         .json({ status: "error", message: "Usuario no encontrado" });
     }
 
-    console.log(`Rol actual del usuario: ${user.role}`);
-    const newRole = user.role === "user" ? "premium" : "user";
-    user.role = newRole;
-    console.log(`Nuevo rol asignado: ${newRole}`);
-    logger.info(`Rol del usuario ${uid} cambiado a ${user.role}`);
+    const requiredDocuments = [
+      "Identificacion",
+      "Comprobante domicilio",
+      "Comprobante estado de cuenta",
+    ];
 
+    const hasAllDocuments = requiredDocuments.every((docName) =>
+      user.documents.some((doc) =>
+        doc.name.toLowerCase().includes(docName.toLowerCase())
+      )
+    );
+
+    if (!hasAllDocuments) {
+      return res.status(400).json({
+        status: "error",
+        message:
+          "No se puede cambiar el rol a premium. Faltan documentos requeridos: identificación, comprobante de domicilio y/o comprobante de estado de cuenta.",
+      });
+    }
+
+    user.role = user.role === "premium" ? "user" : "premium";
     await user.save();
+
+    logger.info(`Rol del usuario cambiado a ${user.role}`);
 
     return res
       .status(200)
@@ -149,23 +166,50 @@ export const uploadProfileImage = async (req, res) => {
         .json({ status: "error", message: "Usuario no encontrado" });
     }
 
-    // Guardar la referencia de la imagen de perfil en el usuario
-    user.profileImage = req.file.path; // O la ruta que corresponda
+    user.profileImage = req.file.path;
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        status: "success",
-        message: "Imagen de perfil actualizada",
-        profileImage: user.profileImage,
-      });
+    res.status(200).json({
+      status: "success",
+      message: "Imagen de perfil actualizada",
+      profileImage: user.profileImage,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        status: "error",
-        message: "Error al actualizar la imagen de perfil",
-      });
+    res.status(500).json({
+      status: "error",
+      message: "Error al actualizar la imagen de perfil",
+    });
+  }
+};
+
+export const uploadDocuments = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const files = req.files;
+
+    if (!files || files.length === 0) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "No se subieron documentos" });
+    }
+
+    const documents = files.map((file) => ({
+      name: file.originalname,
+      reference: `/uploads/documents/${file.filename}`,
+    }));
+
+    const user = await UserService.updateUserDocuments(uid, documents);
+
+    res.status(200).json({
+      status: "success",
+      message: "Documentos subidos exitosamente",
+      documents: user.documents,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error al subir los documentos",
+      error: error.message,
+    });
   }
 };

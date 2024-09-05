@@ -28,7 +28,7 @@ class SessionsController {
     };
 
     try {
-      req.user.last_connection = new Date(); // Actualiza last_connection  
+      req.user.last_connection = new Date(); 
       await req.user.save();
 
       req.session.save((err) => {

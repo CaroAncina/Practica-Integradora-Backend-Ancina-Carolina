@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
       folder = path.join(__dirname, "../public/uploads/profiles");
     } else if (file.fieldname === "product") {
       folder = path.join(__dirname, "../public/uploads/products");
-    } else if (file.fieldname === "document") {
+    } else if (file.fieldname === "documents") {
       folder = path.join(__dirname, "../public/uploads/documents");
     }
 
@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1024 * 1024 * 2 }, // 2MB
+  limits: { fileSize: 1024 * 1024 * 2 }, 
   fileFilter: (req, file, cb) => {
     const filetypes = /jpeg|jpg|png|pdf|docx/;
     const mimetype = filetypes.test(file.mimetype);
