@@ -19,18 +19,27 @@ const initializePassport = () => {
           }
 
           let newUser;
-          if (role === "premium") {
-            // Si el rol es premium, no se asigna carrito
+          if (email === "acoderhouse@gmail.com") {
             newUser = {
               first_name,
               last_name,
               age,
               email,
               password: createHash(password),
+              role: "admin",
+            };
+          } else if (role === "premium") {
+            const newCart = await cartsModel.create({});
+            newUser = {
+              first_name,
+              last_name,
+              age,
+              email,
+              password: createHash(password),
+              cart: newCart._id,
               role: "premium",
             };
           } else {
-            // Si el rol es user, se asigna un carrito
             const newCart = await cartsModel.create({});
             newUser = {
               first_name,
@@ -79,8 +88,8 @@ const initializePassport = () => {
     "github",
     new GitHubStrategy(
       {
-        clientID: "Iv23liZm6FgtJrYwhpPf",
-        clientSecret: "b570fbbf4100213102c124127ac1fc0cec096fad",
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL: "http://localhost:8080/api/sessions/githubcallback",
       },
       async (accessToken, refreshToken, profile, done) => {

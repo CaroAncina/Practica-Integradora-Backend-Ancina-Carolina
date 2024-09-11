@@ -118,34 +118,51 @@ export const changeUserRole = async (req, res) => {
         .json({ status: "error", message: "Usuario no encontrado" });
     }
 
-    const requiredDocuments = [
-      "Identificacion",
-      "Comprobante domicilio",
-      "Comprobante estado de cuenta",
-    ];
+    if (user.role === "user") {
+      const requiredDocuments = [
+        "identificacion",
+        "comprobante de domicilio",
+        "comprobante de estado de cuenta",
+      ];
 
-    const hasAllDocuments = requiredDocuments.every((docName) =>
-      user.documents.some((doc) =>
-        doc.name.toLowerCase().includes(docName.toLowerCase())
-      )
-    );
+      const hasAllDocuments = requiredDocuments.every((docName) =>
+        user.documents.some((doc) =>
+          doc.name.toLowerCase().includes(docName.toLowerCase())
+        )
+      );
 
-    if (!hasAllDocuments) {
-      return res.status(400).json({
-        status: "error",
-        message:
-          "No se puede cambiar el rol a premium. Faltan documentos requeridos: identificación, comprobante de domicilio y/o comprobante de estado de cuenta.",
-      });
+      if (!hasAllDocuments) {
+        return res.status(400).json({
+          status: "error",
+          message:
+            "No se puede cambiar el rol a premium. Faltan documentos requeridos: identificación, comprobante de domicilio y/o comprobante de estado de cuenta.",
+        });
+      }
+
+      user.role = user.role === "premium" ? "user" : "premium";
+      await user.save();
+
+      logger.info(`Rol del usuario cambiado a ${user.role}`);
+
+      return res
+        .status(200)
+        .json({ status: "success", message: `Rol cambiado a ${user.role}` });
+    }
+    if (user.role === "premium") {
+      user.role = "user";
+      await user.save();
+
+      logger.info(`Rol del usuario cambiado a ${user.role}`);
+
+      return res
+        .status(200)
+        .json({ status: "success", message: `Rol cambiado a ${user.role}` });
     }
 
-    user.role = user.role === "premium" ? "user" : "premium";
-    await user.save();
-
-    logger.info(`Rol del usuario cambiado a ${user.role}`);
-
-    return res
-      .status(200)
-      .json({ status: "success", message: `Rol cambiado a ${user.role}` });
+    return res.status(400).json({
+      status: "error",
+      message: "No se puede cambiar el rol. Rol no válido.",
+    });
   } catch (error) {
     logger.error("Error al cambiar el rol del usuario:", error);
     return res.status(500).json({

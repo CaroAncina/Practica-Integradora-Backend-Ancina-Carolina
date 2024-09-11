@@ -22,9 +22,15 @@ router.delete("/:uid", isAuthenticated, deleteUser);
 router.post("/premium/:uid", isAuthenticated, changeUserRole);
 router.post(
   "/upload/profiles/:uid",
+  isAuthenticated,
   upload.single("profile"),
   uploadProfileImage
 );
-router.post("/:uid/documents", upload.array("documents", 10), uploadDocuments);
+router.post(
+  "/:uid/documents",
+  isAuthenticated,
+  upload.array("documents", 5),
+  uploadDocuments
+);
 
 export default router;
