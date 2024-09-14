@@ -6,14 +6,14 @@ import {
   updateProduct,
   deleteProduct,
 } from "../../controllers/productsController.js";
-import { isAuthenticated, isPremium } from "../../middleware/auth.js";
+import { isAuthenticated, isAdminOrPremium } from "../../middleware/auth.js";
 
 const router = Router();
 
 router.get("/", isAuthenticated, getAllProducts);
 router.get("/:pid", isAuthenticated, getProductById);
-router.post("/", isAuthenticated, isPremium, createProduct);
-router.put("/:pid", isAuthenticated, isPremium, updateProduct);
-router.delete("/:pid", isAuthenticated, isPremium, deleteProduct);
+router.post("/", isAuthenticated, isAdminOrPremium, createProduct);
+router.put("/:pid", isAuthenticated, isAdminOrPremium, updateProduct);
+router.delete("/:pid", isAuthenticated, isAdminOrPremium, deleteProduct);
 
 export default router;

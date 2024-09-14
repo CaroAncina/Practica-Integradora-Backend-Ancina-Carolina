@@ -1,19 +1,16 @@
 import ProductService from "../services/productsService.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/EErrors.js";
-import { generateProductErrorInfo } from "../services/errors/Info.js";
 import logger from "../utils/logger.js";
 
 export const getAllProducts = async (req, res) => {
   try {
     let query = {};
 
-    // Filtro por categoría
     if (req.query.category) {
       query.category = req.query.category;
     }
 
-    // Ordenar por precio
     let sort = {};
     if (req.query.sort === "asc") {
       sort.price = 1;
@@ -21,7 +18,6 @@ export const getAllProducts = async (req, res) => {
       sort.price = -1;
     }
 
-    // Limite
     const limit = parseInt(req.query.limit) || 5;
     const page = parseInt(req.query.page) || 1;
 
@@ -85,21 +81,43 @@ export const getProductById = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
-  const { title, description, price, code, stock, category, thumbnail } =
-    req.body;
-  if (!title || !description || !price || !code || !stock || !category) {
-    CustomError.createError({
-      name: "ProductCreationError",
-      cause: generateProductErrorInfo({ title, description, price }),
-      message: "Error tratando de crear el producto",
-      code: EErrors.INVALID_TYPES_ERROR,
-    });
+  const { title, description, price, stock, category, thumbnail } = req.body;
+
+  if (!title || !description || !price || !stock || !category) {
+    return res
+      .status(400)
+      .json({ status: "error", message: "Faltan datos del producto" });
   }
+
   try {
-    const productData = { title, description, price, code, stock, category };
+    let owner = "admin";
+    if (req.user && req.user.role === "premium") {
+      owner = req.user.email;
+    }
+
+    const generateCode = () => {
+      const date = new Date();
+      const year = date.getFullYear().toString().slice(-2);
+      const month = ("0" + (date.getMonth() + 1)).slice(-2);
+      const day = ("0" + date.getDate()).slice(-2);
+      const randomNum = Math.floor(Math.random() * 1000);
+      return `PRD-${year}${month}${day}-${randomNum}`;
+    };
+
+    const productData = {
+      title,
+      description,
+      price,
+      stock,
+      category,
+      owner,
+      code: generateCode(),
+    };
+
     if (thumbnail) {
       productData.thumbnail = thumbnail;
     }
+
     const newProduct = await ProductService.createProduct(productData);
     res.status(201).json({ result: "success", payload: newProduct });
   } catch (error) {

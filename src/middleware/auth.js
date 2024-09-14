@@ -16,8 +16,11 @@ export const isNotAuthenticated = (req, res, next) => {
   }
 };
 
-export const isPremium = (req, res, next) => {
-  if (req.session.user && req.session.user.role === "premium") {
+export const isAdminOrPremium = (req, res, next) => {
+  if (
+    req.session.user &&
+    (req.session.user.role === "admin" || req.session.user.role === "premium")
+  ) {
     return next();
   } else {
     res.status(403).send("Acceso denegado");

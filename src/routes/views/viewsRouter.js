@@ -3,7 +3,7 @@ import viewsController from "../../controllers/viewsController.js";
 import {
   isAuthenticated,
   isNotAuthenticated,
-  isPremium,
+  isAdminOrPremium,
 } from "../../middleware/auth.js";
 
 const router = Router();
@@ -18,7 +18,7 @@ router.get(
 router.get(
   "/realTimeProducts",
   isAuthenticated,
-  isPremium,
+  isAdminOrPremium,
   viewsController.getRealTimeProducts
 );
 router.get("/carts/:cid", isAuthenticated, viewsController.getCartDetails);

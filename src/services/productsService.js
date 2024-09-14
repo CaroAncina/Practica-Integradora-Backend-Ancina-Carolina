@@ -34,7 +34,7 @@ export default class ProductService {
       logger.info("Producto creado correctamente:", productData);
       return product;
     } catch (error) {
-      logger.error("Error al crear el producto:", error.message);
+      logger.error("Error al crear el producto:", error);
       throw new Error("Error al crear el producto");
     }
   }

@@ -1,31 +1,29 @@
 <div>
-    <h2>Perfil de Usuario</h2>
-    <p>Nombre: {{user.first_name}}</p>
-    <p>Apellido: {{user.last_name}}</p>
-    <p>Email: {{user.email}}</p>
-    <p>Edad: {{user.age}}</p>
+  <h2>Perfil de Usuario</h2>
+  <p>Nombre: {{user.first_name}}</p>
+  <p>Apellido: {{user.last_name}}</p>
+  <p>Email: {{user.email}}</p>
+  <p>Edad: {{user.age}}</p>
 </div>
 
 <div>
-    <button onclick="showProducts()">Ir a los productos</button>
-    {{#if (eq user.role 'premium')}}
-        <button onclick="location.href='/realTimeProducts'">Administrar Productos</button>
-    {{else}}
-        <button onclick="showCart('{{user.cart._id}}')">Ir al carrito</button>
-    {{/if}}
+  <button onclick="showProducts()">Ir a los productos</button>
 
-    <form action="/api/sessions/logout" method="POST">
-        <button type="submit">Cerrar Sesión</button>
-    </form>
+  {{#if (eq user.role "admin")}}
+    <button onclick="location.href='/realTimeProducts'">Administrar Productos</button>
+  {{else if (eq user.role "premium")}}
+    <button onclick="location.href='/realTimeProducts'">Administrar Productos</button>
+  {{else}}
+    <button onclick="showCart('{{user.cart._id}}')">Ir al carrito</button>
+  {{/if}}
+
+  <form action="/api/sessions/logout" method="POST">
+    <button type="submit">Cerrar Sesión</button>
+  </form>
 </div>
 
 <script src="/js/carts.js"></script>
 <script>
-    function showProducts() {
-        window.location.href = '/products';
-    }
-
-    function showCart(cartId) {
-        window.location.href = '/carts/' + cartId;
-    }
+  function showProducts() { window.location.href = '/products'; } function
+  showCart(cartId) { window.location.href = '/carts/' + cartId; }
 </script>

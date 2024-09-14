@@ -42,11 +42,9 @@ class ViewsController {
   }
 
   async getRealTimeProducts(req, res) {
-    if (req.session.user && req.session.user.role === "premium") {
-      res.render("realTimeProducts", { user: req.session.user });
-    } else {
-      res.status(403).send("Acceso denegado");
-    }
+    res.render("realTimeProducts", {
+      user: req.session.user,
+    });
   }
 
   async getCartDetails(req, res) {

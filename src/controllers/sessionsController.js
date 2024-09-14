@@ -1,6 +1,7 @@
 import { userDto } from "../dao/DTOs/users.dto.js";
 import logger from "../utils/logger.js";
 import User from "../dao/models/usersModel.js";
+import { sendResetPasswordEmail } from "../utils/mailer.js";
 
 class SessionsController {
   async register(req, res) {
@@ -101,6 +102,31 @@ class SessionsController {
       res.status(200).json(user);
     } else {
       res.status(401).json({ error: "Usuario no autenticado" });
+    }
+  }
+
+  async resetPassword(req, res) {
+    const { email, resetUrl } = req.body;
+
+    if (!email || !resetUrl) {
+      return res.status(400).json({
+        status: "error",
+        message: "Faltan datos: email o URL de restablecimiento",
+      });
+    }
+
+    try {
+      await sendResetPasswordEmail(email, resetUrl);
+      res.status(200).json({
+        status: "success",
+        message: "Correo de restablecimiento enviado",
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: "error",
+        message: "No se pudo enviar el correo de restablecimiento",
+        error: error.message,
+      });
     }
   }
 }

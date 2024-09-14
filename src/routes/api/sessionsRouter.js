@@ -34,5 +34,6 @@ router.get(
   sessionsController.githubCallback
 );
 router.get("/current", isAuthenticated, sessionsController.current);
+router.post("/reset-password", sessionsController.resetPassword);
 
 export default router;
