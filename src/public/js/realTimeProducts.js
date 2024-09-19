@@ -2,6 +2,17 @@ const addProductForm = document.getElementById("add-product-form");
 const listaProductos = document.getElementById("listaProductos");
 const productIdField = document.getElementById("productId");
 
+// Función para limpiar el formulario
+function resetForm() {
+  document.getElementById("title").value = "";
+  document.getElementById("description").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("stock").value = "";
+  document.getElementById("category").value = "";
+  document.getElementById("image").value = "";
+  document.getElementById("productId").value = "";
+}
+
 //Función para mostrar productos
 async function cargarProductos() {
   try {
@@ -77,6 +88,7 @@ addProductForm.addEventListener("submit", async (e) => {
       if (result.result === "success") {
         alert("Producto agregado/actualizado correctamente");
         cargarProductos();
+        resetForm();
       } else {
         alert("Error al agregar/actualizar el producto: " + result.message);
       }

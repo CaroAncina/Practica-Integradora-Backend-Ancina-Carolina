@@ -131,26 +131,26 @@ export const updateProduct = async (req, res) => {
   const { title, description, price, stock, category } = req.body;
 
   try {
-    const updateData = {
-      title,
-      description,
-      price,
-      stock,
-      category,
-    };
-
-    if (req.file) {
-      updateData.thumbnail = `/uploads/products/${req.file.filename}`;
-    }
-
-    const updatedProduct = await ProductService.updateProduct(pid, updateData);
-
-    if (!updatedProduct) {
+    const product = await ProductService.getProductById(pid);
+    if (!product) {
       return res
         .status(404)
         .json({ result: "error", message: "Producto no encontrado" });
     }
 
+    if (req.user.role !== "admin" && req.user.email !== product.owner) {
+      return res.status(403).json({
+        result: "error",
+        message: "No tienes permiso para actualizar este producto",
+      });
+    }
+
+    const updateData = { title, description, price, stock, category };
+    if (req.file) {
+      updateData.thumbnail = `/uploads/products/${req.file.filename}`;
+    }
+
+    const updatedProduct = await ProductService.updateProduct(pid, updateData);
     res.status(200).json({ result: "success", payload: updatedProduct });
   } catch (error) {
     logger.error("Error al actualizar producto:", error);
@@ -162,17 +162,26 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   const { pid } = req.params;
+
   try {
-    const deletedProduct = await ProductService.deleteProduct(pid);
-    if (!deletedProduct) {
-      CustomError.createError({
-        name: "ProductNotFoundError",
-        cause: `Producto con ID ${pid} no encontrado`,
-        message: "Producto no encontrado",
-        code: EErrors.ROUTING_ERROR,
+    const product = await ProductService.getProductById(pid);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ result: "error", message: "Producto no encontrado" });
+    }
+
+    if (req.user.role !== "admin" && req.user.email !== product.owner) {
+      return res.status(403).json({
+        result: "error",
+        message: "No tienes permiso para eliminar este producto",
       });
     }
-    res.status(200).json({ result: "success", payload: deletedProduct });
+
+    await ProductService.deleteProduct(pid);
+    res
+      .status(200)
+      .json({ result: "success", message: "Producto eliminado correctamente" });
   } catch (error) {
     logger.error("Error al eliminar producto:", error);
     res
@@ -191,6 +200,13 @@ export const uploadImageProduct = async (req, res) => {
       return res
         .status(404)
         .json({ status: "error", message: "Producto no encontrado" });
+    }
+
+    if (req.user.role !== "admin" && req.user.email !== product.owner) {
+      return res.status(403).json({
+        result: "error",
+        message: "No tienes permiso para actualizar este producto",
+      });
     }
 
     product.thumbnail = req.file.path;

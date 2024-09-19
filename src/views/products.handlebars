@@ -1,41 +1,54 @@
 <div>
-    {{#if user}}
+  {{#if user}}
     <p>Bienvenido/a, {{user.first_name}}! Aquí están nuestros productos.</p>
-    {{else}}
-    <p>Por favor, <a href="/login">inicie sesión</a> para ver nuestros productos.</p>
-    {{/if}}
+  {{else}}
+    <p>Por favor,
+      <a href="/login">inicie sesión</a>
+      para ver nuestros productos.</p>
+  {{/if}}
 
 </div>
 
 {{#if isValid}}
-<div>
+  <div>
     <h1>Productos</h1>
     {{#each docs}}
-    <div>
+      <div>
         <h2>{{this.title}}</h2>
+        {{#if this.thumbnail}}
+          <img
+            src="{{this.thumbnail}}"
+            alt="{{this.title}}"
+            style="width: 200px; height: auto;"
+          />
+        {{else}}
+          <p>Imagen no disponible</p>
+        {{/if}}
         <p>Descripción: {{this.description}}</p>
         <p>Precio: ${{this.price}}</p>
-        <p>Categoria: {{this.category}}</p>
+        <p>Categoría: {{this.category}}</p>
         <button onclick="showDetails('{{this._id}}')">Ver detalles</button>
         <button onclick="addToCart('{{this._id}}')">Agregar al carrito</button>
-    </div>
+      </div>
     {{/each}}
-</div>
+  </div>
 
-<div>
+  <div>
     {{#if hasPrevPage}}
-    <a href="{{prevLink}}">&lt;&lt; Anterior</a>
+      <a href="{{prevLink}}">&lt;&lt; Anterior</a>
     {{/if}}
-    &nbsp;
-    Página {{page}} de {{totalPages}}
+    &nbsp; Página
+    {{page}}
+    de
+    {{totalPages}}
     &nbsp;
     {{#if hasNextPage}}
-    <a href="{{nextLink}}">Siguiente &gt;&gt;</a>
+      <a href="{{nextLink}}">Siguiente &gt;&gt;</a>
     {{/if}}
-</div>
+  </div>
 
 {{else}}
-<p>No hay productos para mostrar</p>
+  <p>No hay productos para mostrar</p>
 {{/if}}
 
 <script src="/socket.io/socket.io.js"></script>
