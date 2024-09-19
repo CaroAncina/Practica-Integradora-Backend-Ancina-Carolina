@@ -1,7 +1,7 @@
 <div id="form_style">
   <h2>Agregar/Actualizar Producto</h2>
 
-  <form id="add-product-form">
+  <form id="add-product-form" enctype="multipart/form-data">
     <input type="hidden" id="productId" />
 
     <label for="title">Título:</label>
@@ -19,22 +19,13 @@
     <label for="category">Categoría:</label>
     <input type="text" id="category" name="category" required /><br />
 
-    <label for="thumbnail">Imagen:</label>
-    <input type="text" id="thumbnail" name="thumbnail" /><br />
+    <label for="image">Imagen:</label>
+    <input type="file" id="image" name="image" /><br />
 
     <button type="submit" id="btnEnviar">Enviar</button>
-
-    <button
-      type="button"
-      id="btnActualizar"
-      style="display: none;"
-    >Actualizar</button>
-
   </form>
 
   <div id="listaProductos"></div>
-  <input type="hidden" id="userRole" value="{{user.role}}" />
 </div>
 
-<script src="/socket.io/socket.io.js"></script>
 <script src="/js/realTimeProducts.js"></script>

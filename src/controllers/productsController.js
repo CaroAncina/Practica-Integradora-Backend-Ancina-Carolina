@@ -81,7 +81,7 @@ export const getProductById = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
-  const { title, description, price, stock, category, thumbnail } = req.body;
+  const { title, description, price, stock, category } = req.body;
 
   if (!title || !description || !price || !stock || !category) {
     return res
@@ -114,8 +114,8 @@ export const createProduct = async (req, res) => {
       code: generateCode(),
     };
 
-    if (thumbnail) {
-      productData.thumbnail = thumbnail;
+    if (req.file) {
+      productData.thumbnail = `/uploads/products/${req.file.filename}`;
     }
 
     const newProduct = await ProductService.createProduct(productData);
@@ -126,28 +126,31 @@ export const createProduct = async (req, res) => {
   }
 };
 
-export const updateProduct = async (req, res, next) => {
+export const updateProduct = async (req, res) => {
   const { pid } = req.params;
-  const { title, description, price, code, stock, category, thumbnail } =
-    req.body;
+  const { title, description, price, stock, category } = req.body;
+
   try {
-    const updatedProduct = await ProductService.updateProduct(pid, {
+    const updateData = {
       title,
       description,
       price,
-      code,
       stock,
       category,
-      thumbnail,
-    });
-    if (!updatedProduct) {
-      CustomError.createError({
-        name: "ProductNotFoundError",
-        cause: `Producto con ID ${pid} no encontrado`,
-        message: "Producto no encontrado",
-        code: EErrors.ROUTING_ERROR,
-      });
+    };
+
+    if (req.file) {
+      updateData.thumbnail = `/uploads/products/${req.file.filename}`;
     }
+
+    const updatedProduct = await ProductService.updateProduct(pid, updateData);
+
+    if (!updatedProduct) {
+      return res
+        .status(404)
+        .json({ result: "error", message: "Producto no encontrado" });
+    }
+
     res.status(200).json({ result: "success", payload: updatedProduct });
   } catch (error) {
     logger.error("Error al actualizar producto:", error);
@@ -175,5 +178,33 @@ export const deleteProduct = async (req, res) => {
     res
       .status(500)
       .json({ result: "error", error: "Error al eliminar producto" });
+  }
+};
+
+export const uploadImageProduct = async (req, res) => {
+  try {
+    const { pid } = req.params;
+
+    const product = await ProductService.getProductById(pid);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "Producto no encontrado" });
+    }
+
+    product.thumbnail = req.file.path;
+    await ProductService.updateProduct(pid, { thumbnail: product.thumbnail });
+
+    res.status(200).json({
+      status: "success",
+      message: "Imagen del producto actualizada",
+      productImage: product.thumbnail,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error al actualizar imagen del producto",
+    });
   }
 };
