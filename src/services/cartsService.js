@@ -60,13 +60,17 @@ class CartService {
     }
   }
 
-  async updateProductQuantity(cartId, productId, quantity) {
+  async updateProductQuantity(userId, productId, quantity) {
     try {
-      const cart = await CartsMongoDAO.findById(cartId);
-      if (!cart) {
+      const user = await UsersMongoDAO.findById(userId).populate("cart").lean();
+      if (!user || !user.cart) {
         throw new Error("Carrito no encontrado");
       }
 
+      const cart = await CartsMongoDAO.findById(user.cart._id);
+      if (!cart) {
+        throw new Error("Carrito no encontrado");
+      }
       const productIndex = cart.products.findIndex(
         (p) => p.product.toString() === productId
       );
@@ -77,7 +81,7 @@ class CartService {
       cart.products[productIndex].quantity = quantity;
       await cart.save();
       logger.info(
-        `Cantidad del producto ${productId} en el carrito ${cartId} actualizada a ${quantity}`
+        `Cantidad del producto ${productId} actualizada a ${quantity}`
       );
       return cart;
     } catch (error) {
@@ -86,39 +90,49 @@ class CartService {
     }
   }
 
-  async clearCart(cartId) {
+  async removeProductFromCart(userId, productId) {
     try {
-      const cart = await CartsMongoDAO.findById(cartId);
-      cart.products = [];
+      const user = await UsersMongoDAO.findById(userId).populate("cart").lean();
+      if (!user || !user.cart) {
+        throw new Error("Carrito no encontrado");
+      }
+      const cart = await CartsMongoDAO.findById(user.cart._id);
+      if (!cart) {
+        throw new Error("Carrito no encontrado");
+      }
+      const productsIndex = cart.products.findIndex(
+        (p) => p.product.toString() === productId
+      );
+
+      if (cart.products[productsIndex].quantity > 1) {
+        cart.products[productsIndex].quantity -= 1;
+      } else {
+        cart.products.splice(productsIndex, 1);
+      }
+
       await cart.save();
-      logger.info(`Carrito ${cartId} vaciado correctamente`);
       return cart;
     } catch (error) {
-      logger.error("Error al eliminar todos los productos del carrito:", error);
+      logger.error("Error al eliminar el producto del carrito:", error);
       throw error;
     }
   }
 
-  async removeProductFromCart(cartId, productId) {
+  async clearCart(userId) {
     try {
-      const cart = await CartsMongoDAO.findById(cartId);
+      const user = await UsersMongoDAO.findById(userId).populate("cart").lean();
+      if (!user || !user.cart) {
+        throw new Error("Carrito no encontrado");
+      }
+      const cart = await CartsMongoDAO.findById(user.cart._id);
       if (!cart) {
         throw new Error("Carrito no encontrado");
       }
-
-      const productIndex = cart.products.findIndex(
-        (p) => p.product.toString() === productId
-      );
-      if (productIndex === -1) {
-        throw new Error("Producto no encontrado en el carrito");
-      }
-
-      cart.products.splice(productIndex, 1);
+      cart.products = [];
       await cart.save();
-      logger.info(`Producto ${productId} eliminado del carrito ${cartId}`);
       return cart;
     } catch (error) {
-      logger.error("Error al eliminar producto del carrito:", error);
+      logger.error("Error al eliminar todos los productos del carrito:", error);
       throw error;
     }
   }

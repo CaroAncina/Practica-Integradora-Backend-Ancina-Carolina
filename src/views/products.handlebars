@@ -28,7 +28,8 @@
         <p>Precio: ${{this.price}}</p>
         <p>Categoría: {{this.category}}</p>
         <button onclick="showDetails('{{this._id}}')">Ver detalles</button>
-        <button onclick="addToCart('{{this._id}}')">Agregar al carrito</button>
+    <button onclick="addToCart('{{this._id}}')">Agregar al carrito</button>
+  </div>
       </div>
     {{/each}}
   </div>
@@ -51,5 +52,6 @@
   <p>No hay productos para mostrar</p>
 {{/if}}
 
-<script src="/socket.io/socket.io.js"></script>
+
 <script src="/js/products.js"></script>
+<script src="/js/carts.js"></script>

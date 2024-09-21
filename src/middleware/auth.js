@@ -28,6 +28,20 @@ export const isAdminOrPremium = (req, res, next) => {
   }
 };
 
+export const isUserOrPremium = (req, res, next) => {
+  if (
+    req.session.user &&
+    (req.session.user.role === "user" || req.session.user.role === "premium")
+  ) {
+    return next();
+  } else {
+    res.status(403).json({
+      status: "error",
+      message: "Acceso denegado: Necesitas ser usuario o usuario Premium",
+    });
+  }
+};
+
 export const isUser = (req, res, next) => {
   if (req.session.user && req.session.user.role === "user") {
     return next();

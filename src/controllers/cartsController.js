@@ -4,7 +4,6 @@ import ticketsService from "../services/ticketsService.js";
 import { sendPurchaseEmail } from "../utils/mailer.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/EErrors.js";
-import { generateCartErrorInfo } from "../services/errors/Info.js";
 import logger from "../utils/logger.js";
 
 export const getCarts = async (req, res) => {
@@ -52,6 +51,18 @@ export const addProductToCart = async (req, res) => {
         code: EErrors.INVALID_TYPES_ERROR,
       });
     }
+
+    const product = await ProductModel.findById(pid);
+    if (!product) {
+      return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    if (user.role === "premium" && product.owner === user.email) {
+      return res
+        .status(403)
+        .json({ error: "No puedes agregar tu propio producto al carrito" });
+    }
+
     const cart = await CartService.addProductToCart(user._id, pid);
 
     return res
@@ -66,11 +77,12 @@ export const addProductToCart = async (req, res) => {
 };
 
 export const updateProductQuantity = async (req, res) => {
-  const { cid, pid } = req.params;
+  const { pid } = req.params;
+  const { user } = req;
   const { quantity } = req.body;
   try {
     const updatedCart = await CartService.updateProductQuantity(
-      cid,
+      user._id,
       pid,
       quantity
     );
@@ -84,10 +96,30 @@ export const updateProductQuantity = async (req, res) => {
   }
 };
 
-export const clearCart = async (req, res) => {
-  const { cid } = req.params;
+export const removeProductFromCart = async (req, res) => {
   try {
-    const cart = await CartService.clearCart(cid);
+    const { pid } = req.params;
+    const { user } = req;
+    const updatedCart = await CartService.removeProductFromCart(user._id, pid);
+    res.status(200).json({
+      status: "success",
+      message: "Producto eliminado del carrito",
+      cart: updatedCart,
+    });
+  } catch (error) {
+    logger.error("Error al eliminar producto del carrito:", error);
+    res.status(400).json({
+      status: "error",
+      message: "Error al eliminar producto del carrito",
+      error: error.message,
+    });
+  }
+};
+
+export const clearCart = async (req, res) => {
+  const { user } = req;
+  try {
+    const cart = await CartService.clearCart(user._id);
     res.status(200).json({ result: "success", payload: cart });
   } catch (error) {
     logger.error("Error al eliminar todos los productos del carrito:", error);
@@ -98,25 +130,6 @@ export const clearCart = async (req, res) => {
   }
 };
 
-export const removeProductFromCart = async (req, res) => {
-  const { cid, pid } = req.params;
-  try {
-    const updatedCart = await CartService.removeProductFromCart(cid, pid);
-    return res.status(200).json({
-      result: "success",
-      message: "Producto eliminado del carrito",
-      payload: updatedCart,
-    });
-  } catch (error) {
-    logger.error("Error al eliminar producto del carrito:", error);
-    res.status(500).json({
-      result: "error",
-      error: "Error al eliminar producto del carrito",
-    });
-  }
-};
-
-// Endpoint para la compra
 export const purchaseCart = async (req, res) => {
   const { cid } = req.params;
   try {

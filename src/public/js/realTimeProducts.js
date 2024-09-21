@@ -2,7 +2,6 @@ const addProductForm = document.getElementById("add-product-form");
 const listaProductos = document.getElementById("listaProductos");
 const productIdField = document.getElementById("productId");
 
-// Función para limpiar el formulario
 function resetForm() {
   document.getElementById("title").value = "";
   document.getElementById("description").value = "";
@@ -13,10 +12,9 @@ function resetForm() {
   document.getElementById("productId").value = "";
 }
 
-//Función para mostrar productos
 async function cargarProductos() {
   try {
-    const response = await fetch("/api/products");
+    const response = await fetch("/api/products?limit=1000");
     const productos = await response.json();
 
     if (
@@ -43,7 +41,6 @@ async function cargarProductos() {
   }
 }
 
-//Función para agregar un producto
 addProductForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const formData = new FormData();
@@ -101,7 +98,6 @@ addProductForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Función para editar un producto
 window.editarProducto = async function (id) {
   try {
     const response = await fetch(`/api/products/${id}`);
@@ -125,7 +121,6 @@ window.editarProducto = async function (id) {
   }
 };
 
-// Función para eliminar un producto
 window.eliminarProducto = async function (id) {
   try {
     const response = await fetch(`/api/products/${id}`, { method: "DELETE" });

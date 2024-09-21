@@ -29,8 +29,6 @@ router.put(
   updateProduct
 );
 router.delete("/:pid", isAuthenticated, isAdminOrPremium, deleteProduct);
-
-// Ruta separada para cargar imagen
 router.post(
   "/:pid/image",
   isAuthenticated,

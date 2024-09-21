@@ -1,7 +1,18 @@
 <div>
-    <h1>Detalles del producto</h1>
-    <p>Titulo: {{product.title}}</p>
-    <p>Descripción: {{product.description}}</p>
-    <p>Precio: {{product.price}}</p>
-    <p>Categoria: {{product.category}} </p>
+  <h1>Detalles del producto</h1>
+  <p>Título: {{product.title}}</p>
+  <img
+    src="{{product.thumbnail}}"
+    alt="Imagen de {{product.title}}"
+    style="width: 200px; height: auto;"
+  />
+  <p>Descripción: {{product.description}}</p>
+  <p>Precio: ${{product.price}}</p>
+  <p>Categoría: {{product.category}}</p>
+
+  <a href="/products"><button>Volver a productos</button></a>
+  <button onclick="addToCart('{{product._id}}')">Agregar al carrito</button>
 </div>
+
+<script src="/js/carts.js"></script>
+<script src="/js/products.js"></script>
