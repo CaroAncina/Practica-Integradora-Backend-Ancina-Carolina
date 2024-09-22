@@ -93,12 +93,10 @@ class CartService {
         throw new Error("Producto no encontrado en el carrito");
       }
 
-      // Actualizamos la cantidad
       cart.products[productIndex].quantity = quantity;
       await cart.save();
 
-      // Registramos el nombre del producto y la cantidad actualizada
-      const productTitle = cart.products[productIndex].product.title; // Obtenemos el título
+      const productTitle = cart.products[productIndex].product.title;
       logger.info(
         `Cantidad del producto ${productTitle} actualizada a ${quantity}`
       );

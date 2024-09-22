@@ -15,9 +15,9 @@ export default class ProductService {
 
   static async getProductById(id) {
     try {
-      const product = await productsModel.findById(id).lean();
+      const product = await productsModel.findById(id);
       if (!product) {
-        logger.warn(`Producto ${product.title} no encontrado`);
+        logger.info(`Producto ${product.title} no encontrado`);
       } else {
         logger.info(`Producto ${product.title} obtenido correctamente`);
       }
@@ -43,9 +43,11 @@ export default class ProductService {
     try {
       const result = await productsModel.updateOne({ _id: id }, productData);
       if (result.nModified === 0) {
-        logger.warn(`Producto con ID ${id} no encontrado para actualizar`);
+        logger.info(
+          `Producto con ID ${result.id} no encontrado para actualizar`
+        );
       } else {
-        logger.info(`Producto con ID ${id} actualizado correctamente`);
+        logger.info(`Producto con ID ${result.id} actualizado correctamente`);
       }
       return result;
     } catch (error) {
@@ -56,11 +58,20 @@ export default class ProductService {
 
   static async deleteProduct(id) {
     try {
+      const product = await productsModel.findById(id);
+
+      if (!product) {
+        logger.info(`Producto con ID ${id} no encontrado para eliminar`);
+        return { deletedCount: 0 };
+      }
+
       const result = await productsModel.deleteOne({ _id: id });
       if (result.deletedCount === 0) {
-        logger.warn(`Producto con ID ${id} no encontrado para eliminar`);
+        logger.info(`Producto con ID ${id} no encontrado para eliminar`);
       } else {
-        logger.info(`Producto con ID ${id} eliminado correctamente`);
+        logger.info(
+          `Producto "${product.title}" (ID: ${id}) eliminado correctamente`
+        );
       }
       return result;
     } catch (error) {

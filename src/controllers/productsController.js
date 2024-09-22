@@ -1,7 +1,9 @@
 import ProductService from "../services/productsService.js";
+import UsersMongoDAO from "../dao/models/usersModel.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/EErrors.js";
 import logger from "../utils/logger.js";
+import { sendNotificationEmail } from "../utils/mailer.js";
 
 export const getAllProducts = async (req, res) => {
   try {
@@ -171,17 +173,30 @@ export const deleteProduct = async (req, res) => {
         .json({ result: "error", message: "Producto no encontrado" });
     }
 
-    if (req.user.role !== "admin" && req.user.email !== product.owner) {
-      return res.status(403).json({
+    const owner = await UsersMongoDAO.findOne({ email: product.owner });
+    if (!owner) {
+      return res.status(404).json({
         result: "error",
-        message: "No tienes permiso para eliminar este producto",
+        message: "Propietario del producto no encontrado",
       });
     }
 
-    await ProductService.deleteProduct(pid);
-    res
-      .status(200)
-      .json({ result: "success", message: "Producto eliminado correctamente" });
+    if (owner.role === "premium") {
+      await sendNotificationEmail(owner.email, product.title);
+    }
+
+    if (req.user.role === "admin" || req.user.email === product.owner) {
+      await ProductService.deleteProduct(pid);
+      return res.status(200).json({
+        result: "success",
+        message: `Producto ${product.title} eliminado correctamente`,
+      });
+    }
+
+    return res.status(403).json({
+      result: "error",
+      message: "No tienes permiso para eliminar este producto",
+    });
   } catch (error) {
     logger.error("Error al eliminar producto:", error);
     res

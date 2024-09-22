@@ -10,7 +10,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-//Correo para la compra
 export const sendPurchaseEmail = async (to, ticket) => {
   const mailOptions = {
     from: "acoderhouse@gmail.com",
@@ -29,7 +28,6 @@ export const sendPurchaseEmail = async (to, ticket) => {
   }
 };
 
-//Correo para reestablecer contraseña
 export const sendResetPasswordEmail = async (to, resetUrl) => {
   const mailOptions = {
     from: "acoderhouse@gmail.com",
@@ -44,6 +42,26 @@ export const sendResetPasswordEmail = async (to, resetUrl) => {
     logger.info("Correo de restablecimiento enviado");
   } catch (error) {
     logger.error("Error al enviar el correo de restablecimiento:", error);
+    throw error;
+  }
+};
+
+export const sendNotificationEmail = async (email, productTitle) => {
+  const mailOptions = {
+    from: "acoderhouse@gmail.com",
+    to: email,
+    subject: "Notificación de eliminación de producto",
+    text: `Tu producto "${productTitle}" ha sido eliminado por el administrador.`,
+    html: `<p>Tu producto "${productTitle}" ha sido eliminado por el administrador"</p>`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    logger.info(
+      `Correo enviado a ${email} notificando sobre la eliminación del producto.`
+    );
+  } catch (error) {
+    logger.error("Error al enviar el correo:", error);
     throw error;
   }
 };

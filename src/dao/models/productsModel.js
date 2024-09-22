@@ -12,7 +12,7 @@ const productsSchema = new mongoose.Schema({
   category: { type: String, required: true, max: 30 },
   thumbnail: { type: String },
   status: { type: Boolean, required: true, default: true },
-  owner: { type: String, default: "admin" },
+  owner: { type: mongoose.Schema.Types.String, ref: "User", default: "admin" },
 });
 
 productsSchema.plugin(mongoosePaginate);
