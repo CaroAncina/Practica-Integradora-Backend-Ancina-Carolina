@@ -17,29 +17,34 @@ class CartService {
     }
   }
 
-  async getCartById(cartId) {
+  async getCartById(userId) {
     try {
-      const cart = await CartsMongoDAO.findById(cartId);
-      if (!cart) {
-        logger.warn(`Carrito con ID ${cartId} no encontrado`);
-      } else {
-        logger.info(`Carrito con ID ${cartId} obtenido correctamente`);
+      const user = await UsersMongoDAO.findById(userId).populate("cart");
+      if (!user || !user.cart) {
+        logger.info(`Usuario con ID ${userId} no tiene un carrito asociado`);
+        return null;
       }
-      return cart;
+      return user.cart;
     } catch (error) {
-      logger.error("Error al obtener carrito por ID:", error);
-      throw new Error("Error al obtener carrito por ID");
+      logger.error("Error al obtener el carrito del usuario:", error);
+      throw new Error("Error al obtener el carrito");
     }
   }
 
   async addProductToCart(userId, productId) {
     try {
-      const user = await UsersMongoDAO.findById(userId).populate("cart").lean();
+      const user = await UsersMongoDAO.findById(userId).populate("cart");
       if (!user || !user.cart) {
         throw new Error("Carrito no encontrado");
       }
 
+      const product = await ProductModel.findById(productId);
+      if (!product) {
+        throw new Error("Producto no encontrado");
+      }
+
       const cart = await CartsMongoDAO.findById(user.cart._id);
+
       const productIndex = cart.products.findIndex(
         (p) => p.product.toString() === productId
       );
@@ -49,9 +54,11 @@ class CartService {
       } else {
         cart.products.push({ product: productId, quantity: 1 });
       }
+
       await cart.save();
+
       logger.info(
-        `Producto ${productId} agregado al carrito del usuario ${userId}`
+        `Producto ${product.title} agregado al carrito del usuario ${user.email}`
       );
       return cart;
     } catch (error) {
@@ -62,27 +69,40 @@ class CartService {
 
   async updateProductQuantity(userId, productId, quantity) {
     try {
-      const user = await UsersMongoDAO.findById(userId).populate("cart").lean();
+      const user = await UsersMongoDAO.findById(userId).populate("cart");
       if (!user || !user.cart) {
         throw new Error("Carrito no encontrado");
       }
 
-      const cart = await CartsMongoDAO.findById(user.cart._id);
+      const product = await ProductModel.findById(productId);
+      if (!product) {
+        throw new Error("Producto no encontrado");
+      }
+
+      const cart = await CartsMongoDAO.findById(user.cart._id).populate(
+        "products.product"
+      );
       if (!cart) {
         throw new Error("Carrito no encontrado");
       }
+
       const productIndex = cart.products.findIndex(
-        (p) => p.product.toString() === productId
+        (p) => p.product._id.toString() === productId
       );
       if (productIndex === -1) {
         throw new Error("Producto no encontrado en el carrito");
       }
 
+      // Actualizamos la cantidad
       cart.products[productIndex].quantity = quantity;
       await cart.save();
+
+      // Registramos el nombre del producto y la cantidad actualizada
+      const productTitle = cart.products[productIndex].product.title; // Obtenemos el título
       logger.info(
-        `Cantidad del producto ${productId} actualizada a ${quantity}`
+        `Cantidad del producto ${productTitle} actualizada a ${quantity}`
       );
+
       return cart;
     } catch (error) {
       logger.error("Error al actualizar cantidad del producto:", error);
@@ -92,10 +112,15 @@ class CartService {
 
   async removeProductFromCart(userId, productId) {
     try {
-      const user = await UsersMongoDAO.findById(userId).populate("cart").lean();
+      const user = await UsersMongoDAO.findById(userId).populate("cart");
       if (!user || !user.cart) {
         throw new Error("Carrito no encontrado");
       }
+      const product = await ProductModel.findById(productId);
+      if (!product) {
+        throw new Error("Producto no encontrado");
+      }
+
       const cart = await CartsMongoDAO.findById(user.cart._id);
       if (!cart) {
         throw new Error("Carrito no encontrado");
@@ -111,6 +136,7 @@ class CartService {
       }
 
       await cart.save();
+      logger.info(`Producto ${product.title} eliminado del carrito`);
       return cart;
     } catch (error) {
       logger.error("Error al eliminar el producto del carrito:", error);
@@ -120,7 +146,7 @@ class CartService {
 
   async clearCart(userId) {
     try {
-      const user = await UsersMongoDAO.findById(userId).populate("cart").lean();
+      const user = await UsersMongoDAO.findById(userId).populate("cart");
       if (!user || !user.cart) {
         throw new Error("Carrito no encontrado");
       }
@@ -130,6 +156,7 @@ class CartService {
       }
       cart.products = [];
       await cart.save();
+      logger.info(`Carrito vaciado correctamente`);
       return cart;
     } catch (error) {
       logger.error("Error al eliminar todos los productos del carrito:", error);

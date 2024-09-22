@@ -17,9 +17,9 @@ export default class ProductService {
     try {
       const product = await productsModel.findById(id).lean();
       if (!product) {
-        logger.warn(`Producto con ID ${id} no encontrado`);
+        logger.warn(`Producto ${product.title} no encontrado`);
       } else {
-        logger.info(`Producto con ID ${id} obtenido correctamente`);
+        logger.info(`Producto ${product.title} obtenido correctamente`);
       }
       return product;
     } catch (error) {

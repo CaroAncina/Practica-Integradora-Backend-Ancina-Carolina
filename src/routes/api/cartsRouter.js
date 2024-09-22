@@ -33,6 +33,6 @@ router.delete(
   removeProductFromCart
 );
 router.delete("/", isAuthenticated, isUserOrPremium, clearCart);
-router.post("/:cid/purchase", isAuthenticated, isUserOrPremium, purchaseCart);
+router.post("/purchase", isAuthenticated, isUserOrPremium, purchaseCart);
 
 export default router;

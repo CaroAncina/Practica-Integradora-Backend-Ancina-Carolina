@@ -90,3 +90,26 @@ async function clearCart() {
     alert("Error al vaciar el carrito.");
   }
 }
+
+async function purchaseCart() {
+  try {
+    const response = await fetch(`/api/carts/purchase`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.ok) {
+      alert("Compra exitosa.");
+      location.reload();
+    } else if (response.status === 404) {
+      alert("No se pudo realizar la compra.");
+    } else {
+      const errorData = await response.json();
+      alert(`Error al realizar la compra: ${errorData.error}`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Error al realizar la compra.");
+  }
+}

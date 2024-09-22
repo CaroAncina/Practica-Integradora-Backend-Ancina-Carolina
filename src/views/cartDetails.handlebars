@@ -24,7 +24,8 @@
         </li>
       {{/each}}
     </ul>
-    <button id="purchaseButton">Realizar compra</button>
+    <button id="purchaseButton" onclick="purchaseCart()">Realizar compra</button>
+
     <button onclick="clearCart('{{cart._id}}')">Vaciar carrito</button>
   {{else}}
     <p>No hay productos en este carrito.</p>

@@ -20,17 +20,23 @@ export const getCarts = async (req, res) => {
 
 export const getCartById = async (req, res) => {
   try {
-    const cartId = req.params.cid;
-    const cart = await CartService.getCartById(cartId);
+    const { user } = req;
+
+    if (!user || !user._id) {
+      return res.status(400).json({ error: "Usuario no autenticado o sin ID" });
+    }
+
+    const cart = await CartService.getCartById(user._id);
 
     if (!cart) {
       CustomError.createError({
         name: "CartNotFoundError",
-        cause: `Carrito con ID ${cartId} no encontrado`,
+        cause: `Carrito con ID ${user._id} no encontrado`,
         message: "Carrito no encontrado",
         code: EErrors.ROUTING_ERROR,
       });
     }
+
     return res.status(200).json(cart);
   } catch (error) {
     logger.error("Error al obtener el carrito:", error);
@@ -131,13 +137,13 @@ export const clearCart = async (req, res) => {
 };
 
 export const purchaseCart = async (req, res) => {
-  const { cid } = req.params;
+  const { user } = req;
   try {
-    const cart = await CartService.getCartById(cid);
+    const cart = await CartService.getCartById(user._id);
     if (!cart) {
       CustomError.createError({
         name: "CartNotFoundError",
-        cause: `Carrito con ID ${cid} no encontrado`,
+        cause: `Carrito con ID ${user._id} no encontrado`,
         message: "Carrito no encontrado",
         code: EErrors.ROUTING_ERROR,
       });
@@ -166,12 +172,13 @@ export const purchaseCart = async (req, res) => {
         ),
       });
 
-      await sendPurchaseEmail(req.session.user.email, ticket);
+      await sendPurchaseEmail(user.email, ticket);
     }
 
     cart.products = cart.products.filter((item) =>
       productsNotPurchased.includes(item.product)
     );
+
     await cart.save();
 
     res.status(200).json({
