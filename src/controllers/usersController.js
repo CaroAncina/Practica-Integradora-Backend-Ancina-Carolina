@@ -108,12 +108,17 @@ export const deleteUser = async (req, res) => {
 
 export const changeUserRole = async (req, res) => {
   try {
-    const userId = req.params.uid; // ID del usuario cuyo rol será cambiado
-    const requesterRole = req.user.role; // Rol del usuario que hace la solicitud (admin o user)
+    const requestingUserId = req.user._id;
+    const targetUserId = req.params.uid || requestingUserId;
 
-    const updatedUser = await UserService.changeUserRole(userId, requesterRole);
+    const updatedUser = await UserService.changeUserRole(
+      requestingUserId,
+      targetUserId
+    );
 
-    logger.info(`Rol del usuario cambiado a ${updatedUser.role}`);
+    logger.info(
+      `Rol del usuario ${targetUserId} cambiado a ${updatedUser.role}`
+    );
     return res.status(200).json({
       status: "success",
       message: `Rol cambiado a ${updatedUser.role}`,

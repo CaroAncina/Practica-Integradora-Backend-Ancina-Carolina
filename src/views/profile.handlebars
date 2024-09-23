@@ -4,27 +4,127 @@
   <p>Apellido: {{user.last_name}}</p>
   <p>Email: {{user.email}}</p>
   <p>Edad: {{user.age}}</p>
+  <p>Rol: {{user.role}}</p>
 </div>
 
 <div>
-  <button onclick="showProducts()">Ir a los productos</button>
+  <h3>Actualizar Datos</h3>
+  <form
+    id="userUpdateForm"
+    onsubmit="updateUser('{{user._id}}'); return false;"
+  >
+    <div class="form-group">
+      <label for="first_name">Nombre:</label>
+      <input
+        type="text"
+        id="first_name"
+        name="first_name"
+        value="{{user.first_name}}"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="last_name">Apellido:</label>
+      <input
+        type="text"
+        id="last_name"
+        name="last_name"
+        value="{{user.last_name}}"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="age">Edad:</label>
+      <input type="number" id="age" name="age" value="{{user.age}}" required />
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        value="{{user.email}}"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="password">Contraseña:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Nueva contraseña (opcional)"
+      />
+    </div>
+    <button style="margin: 2px;" type="submit">Actualizar Datos</button>
+  </form>
+</div>
 
-  {{#if (eq user.role "admin")}}
-    <button onclick="location.href='/realTimeProducts'">Administrar Productos</button>
-    <button onclick="location.href='/adminUsers'">Administrar Usuarios</button>
+<div>
+  <h3>Imagen de Perfil</h3>
+  <form
+    id="profileImageForm"
+    enctype="multipart/form-data"
+    onsubmit="uploadProfileImage(); return false;"
+  >
+    <input type="file" name="profile" />
+    <button style="margin: 2px;" type="submit">Subir Imagen</button>
+  </form>
+</div>
+
+<div>
+  {{#if (eq user.role "user")}}
+    <h3>Subir Documentación</h3>
+    <form
+      id="documentsForm"
+      enctype="multipart/form-data"
+      onsubmit="uploadDocuments('{{user._id}}'); return false;"
+    >
+      <input type="file" name="documents" multiple />
+      <button type="submit">Subir Documentos</button>
+    </form>
+    <button
+      style="margin: 2px;"
+      onclick="changeUserRole('{{user._id}}')"
+    >Cambiar a Premium</button>
   {{else if (eq user.role "premium")}}
-    <button onclick="location.href='/realTimeProducts'">Administrar Productos</button>
-  {{else}}
-    <button onclick="showCart('{{user.cart._id}}')">Ir al carrito</button>
+    <button
+      style="margin: 2px;"
+      onclick="changeUserRole('{{user._id}}')"
+    >Cambiar a User</button>
   {{/if}}
+</div>
 
+<div>
+  <button style="margin: 2px;" onclick="showProducts()">Ir a los productos</button>
+</div>
+
+<div>
+  {{#if (eq user.role "admin")}}
+    <button
+      style="margin: 2px;"
+      onclick="location.href='/realTimeProducts'"
+    >Administrar Productos</button>
+    <button
+      style="margin: auto;"
+      onclick="location.href='/adminUsers'"
+    >Administrar Usuarios</button>
+  {{else if (eq user.role "premium")}}
+    <button
+      style="margin: 2px;"
+      onclick="location.href='/realTimeProducts'"
+    >Administrar Productos</button>
+  {{else}}
+    <button style="margin: 2px;" onclick="showCart('{{user.cart._id}}')">Ir al
+      carrito</button>
+  {{/if}}
+</div>
+
+<div>
   <form action="/api/sessions/logout" method="POST">
-    <button type="submit">Cerrar Sesión</button>
+    <button style="margin: 2px;" type="submit">Cerrar Sesión</button>
   </form>
 </div>
 
 <script src="/js/carts.js"></script>
-<script>
-  function showProducts() { window.location.href = '/products'; } function
-  showCart(cartId) { window.location.href = '/carts/' + cartId; }
-</script>
+<script src="/js/profile.js"></script>

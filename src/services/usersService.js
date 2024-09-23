@@ -133,19 +133,25 @@ class UserService {
     return user;
   }
 
-  static async changeUserRole(userId, requesterRole) {
+  static async changeUserRole(requestingUserId, targetUserId) {
     try {
-      const user = await UserMongoDAO.findById(userId);
-      if (!user) {
-        throw new Error("Usuario no encontrado");
+      const requestingUser = await UserMongoDAO.findById(requestingUserId);
+      const targetUser = await UserMongoDAO.findById(targetUserId);
+
+      if (!requestingUser) {
+        throw new Error("Usuario solicitante no encontrado");
       }
 
-      if (requesterRole === "admin") {
-        user.role = user.role === "premium" ? "user" : "premium";
+      if (!targetUser) {
+        throw new Error("Usuario objetivo no encontrado");
+      }
+
+      if (requestingUser.role === "admin") {
+        targetUser.role = targetUser.role === "premium" ? "user" : "premium";
       } else {
-        if (user.role === "premium") {
-          user.role = "user";
-        } else {
+        if (targetUser.role === "premium") {
+          targetUser.role = "user";
+        } else if (targetUser.role === "user") {
           const requiredDocuments = [
             "identificacion",
             "comprobante de domicilio",
@@ -153,7 +159,7 @@ class UserService {
           ];
 
           const hasAllDocuments = requiredDocuments.every((docName) =>
-            user.documents.some((doc) =>
+            targetUser.documents.some((doc) =>
               doc.name.toLowerCase().includes(docName.toLowerCase())
             )
           );
@@ -164,11 +170,11 @@ class UserService {
             );
           }
 
-          user.role = "premium";
+          targetUser.role = "premium";
         }
       }
 
-      const updatedUser = await user.save();
+      const updatedUser = await targetUser.save();
       return updatedUser;
     } catch (error) {
       logger.error("Error al cambiar rol del usuario:", error);
