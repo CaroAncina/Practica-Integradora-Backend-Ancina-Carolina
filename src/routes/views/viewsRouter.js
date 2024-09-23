@@ -4,6 +4,7 @@ import {
   isAuthenticated,
   isNotAuthenticated,
   isAdminOrPremium,
+  isAdmin
 } from "../../middleware/auth.js";
 
 const router = Router();
@@ -31,5 +32,6 @@ router.get("/forgot-password", viewsController.getForgotPasswordPage);
 router.post("/forgot-password", viewsController.handleForgotPassword);
 router.get("/reset-password/:token", viewsController.getResetPasswordPage);
 router.post("/reset-password/:token", viewsController.handleResetPassword);
+router.get("/adminUsers",viewsController.getAdminUsersPage)
 
 export default router;

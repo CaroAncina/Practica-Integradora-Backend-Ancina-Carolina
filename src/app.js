@@ -43,6 +43,10 @@ const hbs = handlebars.create({
       return a === b;
     },
   },
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true,
+  },
 });
 
 app.engine("handlebars", hbs.engine);

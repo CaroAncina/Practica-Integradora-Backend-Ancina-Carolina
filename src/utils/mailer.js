@@ -65,3 +65,21 @@ export const sendNotificationEmail = async (email, productTitle) => {
     throw error;
   }
 };
+
+export const sendInactivityEmail = async (email) => {
+  const mailOptions = {
+    from: "acoderhouse@gmail.com",
+    to: email,
+    subject: "Cuenta eliminada por inactividad",
+    text: `Tu cuenta ha sido eliminada debido a la inactividad en los últimos 30 minutos.`,
+    html: `<p>Tu cuenta ha sido eliminada debido a la inactividad en los últimos 30 minutos.</p>`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    logger.info(`Correo enviado a ${email} por inactividad.`);
+  } catch (error) {
+    logger.error("Error al enviar el correo por inactividad:", error);
+    throw error;
+  }
+};

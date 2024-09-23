@@ -51,6 +51,11 @@ class SessionsController {
 
   async logout(req, res) {
     try {
+      if (!req.session.user || !req.session.user._id) {
+        return res
+          .status(400)
+          .send("No se encontró información del usuario en la sesión");
+      }
       const user = await User.findById(req.session.user._id);
       if (user) {
         user.last_connection = new Date();

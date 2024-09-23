@@ -1,8 +1,8 @@
 import viewsService from "../services/viewsService.js";
+import userService from '../services/usersService.js';
 import logger from "../utils/logger.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import userService from "../dao/models/usersModel.js";
 import { sendResetPasswordEmail } from "../utils/mailer.js";
 
 class ViewsController {
@@ -88,6 +88,15 @@ class ViewsController {
 
   async getProfilePage(req, res) {
     res.render("profile", { user: req.session.user });
+  }
+  async getAdminUsersPage(req, res) {
+    try {
+      const users = await userService.getBasicUserData();
+      res.render("adminUsers", { user: req.session.user, users });
+    } catch (error) {
+      logger.error("Error al obtener los usuarios:", error);
+      res.status(500).send("Error al obtener los usuarios");
+    }
   }
 
   async getForgotPasswordPage(req, res) {

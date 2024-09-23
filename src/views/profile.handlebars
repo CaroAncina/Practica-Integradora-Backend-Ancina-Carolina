@@ -11,6 +11,7 @@
 
   {{#if (eq user.role "admin")}}
     <button onclick="location.href='/realTimeProducts'">Administrar Productos</button>
+    <button onclick="location.href='/adminUsers'">Administrar Usuarios</button>
   {{else if (eq user.role "premium")}}
     <button onclick="location.href='/realTimeProducts'">Administrar Productos</button>
   {{else}}

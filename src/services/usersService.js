@@ -1,6 +1,7 @@
 import UserMongoDAO from "../dao/classes/users.dao.js";
 import CartMongoDAO from "../dao/classes/carts.dao.js";
 import { createHash } from "../utils/utils.js";
+import { sendNotificationEmail } from "../utils/mailer.js";
 import logger from "../utils/logger.js";
 
 class UserService {
@@ -42,7 +43,7 @@ class UserService {
     try {
       const user = await UserMongoDAO.findByEmail(email);
       if (!user) {
-        logger.warn(`Usuario con email ${email} no encontrado`);
+        logger.info(`Usuario con email ${email} no encontrado`);
       } else {
         logger.info(`Usuario con email ${email} obtenido con éxito`);
       }
@@ -55,16 +56,12 @@ class UserService {
     }
   }
 
-  static async getAllUsers() {
+  static async getBasicUserData() {
     try {
       const users = await UserMongoDAO.findAll();
-      logger.info("Todos los usuarios obtenidos con éxito");
       return users;
     } catch (error) {
-      logger.error(`Error al obtener todos los usuarios: ${error.message}`, {
-        stack: error.stack,
-      });
-      throw new Error("Error al obtener todos los usuarios");
+      throw new Error("Error al obtener los usuarios");
     }
   }
 
@@ -75,10 +72,12 @@ class UserService {
       }
       const updated = await UserMongoDAO.update(uid, updatedUser);
       if (!updated) {
-        logger.warn(`Usuario con id ${uid} no encontrado para actualizar`);
+        logger.info(
+          `Usuario con id ${uid.email} no encontrado para actualizar`
+        );
         throw new Error("Usuario no encontrado para actualizar");
       }
-      logger.info(`Usuario con id ${uid} actualizado con éxito`);
+      logger.info(`Usuario con id ${uid.email} actualizado con éxito`);
       return updated;
     } catch (error) {
       logger.error(`Error al actualizar usuario: ${error.message}`, {
@@ -88,20 +87,37 @@ class UserService {
     }
   }
 
-  static async deleteUser(uid) {
+  static async deleteUserAndCart(uid) {
     try {
-      const deleted = await UserMongoDAO.delete(uid);
-      if (!deleted) {
-        logger.warn(`Usuario con id ${uid} no encontrado para eliminar`);
-        throw new Error("Usuario no encontrado para eliminar");
+      const user = await UserMongoDAO.findById(uid);
+      if (!user) {
+        logger.info(`Usuario con id ${uid} no encontrado para eliminar`);
+        return { deletedUser: null, deletedCart: null };
       }
-      logger.info(`Usuario con id ${uid} eliminado con éxito`);
-      return deleted;
+
+      let deletedCart = null;
+      if (user.cart) {
+        deletedCart = await CartMongoDAO.delete(user.cart);
+        if (!deletedCart) {
+          logger.info(
+            `Carrito del usuario con id ${user.email} no encontrado para eliminar`
+          );
+        } else {
+          logger.info(
+            `Carrito del usuario con id ${user.email} eliminado con éxito`
+          );
+        }
+      }
+
+      const deletedUser = await UserMongoDAO.delete(uid);
+      logger.info(`Usuario con id ${user.email} eliminado con éxito`);
+
+      return { deletedUser, deletedCart };
     } catch (error) {
-      logger.error(`Error al eliminar usuario: ${error.message}`, {
+      logger.error(`Error al eliminar usuario y carrito: ${error.message}`, {
         stack: error.stack,
       });
-      throw new Error("Error al eliminar usuario");
+      throw new Error("Error al eliminar usuario y carrito");
     }
   }
 
@@ -113,7 +129,104 @@ class UserService {
 
     user.documents = [...user.documents, ...documents];
     await user.save();
+    logger.info(`Documentación actualizada para el usuario ${user.email}`);
     return user;
+  }
+
+  static async changeUserRole(userId, requesterRole) {
+    try {
+      const user = await UserMongoDAO.findById(userId);
+      if (!user) {
+        throw new Error("Usuario no encontrado");
+      }
+
+      if (requesterRole === "admin") {
+        user.role = user.role === "premium" ? "user" : "premium";
+      } else {
+        if (user.role === "premium") {
+          user.role = "user";
+        } else {
+          const requiredDocuments = [
+            "identificacion",
+            "comprobante de domicilio",
+            "comprobante de estado de cuenta",
+          ];
+
+          const hasAllDocuments = requiredDocuments.every((docName) =>
+            user.documents.some((doc) =>
+              doc.name.toLowerCase().includes(docName.toLowerCase())
+            )
+          );
+
+          if (!hasAllDocuments) {
+            throw new Error(
+              "Faltan los siguientes documentos: identificación, comprobante de domicilio, comprobante de estado de cuenta"
+            );
+          }
+
+          user.role = "premium";
+        }
+      }
+
+      const updatedUser = await user.save();
+      return updatedUser;
+    } catch (error) {
+      logger.error("Error al cambiar rol del usuario:", error);
+      throw new Error("Error al cambiar rol del usuario");
+    }
+  }
+
+  static async uploadProfileImage(uid, imagePath) {
+    try {
+      const user = await UserMongoDAO.findById(uid);
+      if (!user) {
+        throw new Error("Usuario no encontrado");
+      }
+
+      user.profileImage = imagePath;
+      await user.save();
+      logger.info(`Imagen de perfil actualizada para el usuario ${user.email}`);
+      return user;
+    } catch (error) {
+      logger.error(`Error al subir imagen de perfil: ${error.message}`);
+      throw new Error("Error al subir imagen de perfil");
+    }
+  }
+
+  static async deleteInactiveUsers() {
+    const cutoffDate = new Date(Date.now() - 30 * 60 * 1000); // 30 min. prueba
+
+    try {
+      const inactiveUsers = await UserMongoDAO.findInactiveSince(cutoffDate);
+
+      for (const user of inactiveUsers) {
+        if (user.cart) {
+          await CartMongoDAO.delete(user.cart._id);
+          logger.info(
+            `Carrito del usuario con id ${user._id} eliminado con éxito`
+          );
+        }
+
+        await sendNotificationEmail(
+          user.email,
+          "Cuenta eliminada por inactividad"
+        );
+        logger.info(
+          `Correo enviado a ${user.email} notificando la eliminación de su cuenta por inactividad`
+        );
+
+        await UserMongoDAO.delete(user._id);
+        logger.info(
+          `Usuario con id ${user._id} eliminado con éxito y su carrito eliminado con éxito`
+        );
+      }
+      return {
+        message: `Se han eliminado ${inactiveUsers.length} usuarios inactivos y sus carritos asociados.`,
+      };
+    } catch (error) {
+      logger.error("Error al eliminar usuarios inactivos:", error);
+      throw new Error("Error al eliminar usuarios inactivos");
+    }
   }
 }
 
