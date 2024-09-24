@@ -1,5 +1,5 @@
 import viewsService from "../services/viewsService.js";
-import userService from '../services/usersService.js';
+import userService from "../services/usersService.js";
 import logger from "../utils/logger.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -51,10 +51,29 @@ class ViewsController {
     try {
       const cartId = req.params.cid;
       const cart = await viewsService.getCartDetails(cartId);
+
       if (!cart) {
         return res.status(404).json({ error: "Carrito no encontrado" });
       }
-      res.render("cartDetails", { cart });
+
+      const totalQuantity = cart.products.reduce(
+        (acc, item) => acc + item.quantity,
+        0
+      );
+      const totalPrice = cart.products.reduce((acc, item) => {
+        if (item.product && item.product.price) {
+          return acc + item.quantity * item.product.price;
+        } else {
+          console.error("Producto sin precio:", item.product);
+          return acc;
+        }
+      }, 0);
+
+      res.render("cartDetails", {
+        cart,
+        totalQuantity,
+        totalPrice,
+      });
     } catch (error) {
       logger.error("Error al obtener el carrito:", error);
       res.status(500).send("Error al obtener el carrito");

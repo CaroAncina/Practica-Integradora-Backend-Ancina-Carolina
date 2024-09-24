@@ -5,16 +5,17 @@
 <div>
     <form action="/api/sessions/login" method="POST">
         <label for="email">Email:</label>
-        <input type="email" name="email" required>
+        <input type="email" name="email" required />
         <label for="password">Contraseña:</label>
-        <input type="password" name="password" required>
-        <button type="submit">Ingresar</button>
+        <input type="password" name="password" required />
+        <button style="margin: 2px;" type="submit">Ingresar</button>
+        <a href="/forgot-password"><button style="margin: 2px;">Olvide mi Contraseña</button></a>
     </form>
-    <a href="/register"><button>Registrarse</button></a>
-    <a href="/forgot-password"><button>Olvide mi Contraseña</button></a>
+    <div>
+
+    </div>
+    <a href="/api/sessions/github"><button style="margin: 2px;">Entrar con Github</button></a>
 </div>
 
-
-<div>
-    <a href="/api/sessions/github"><button>Entrar con Github</button></a>
+<a href="/register"><button style="margin: 2px;">Registrarse</button></a>
 </div>

@@ -12,6 +12,7 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import errorHandler from "./middleware/errorhandler.js";
 import logger from "./utils/logger.js";
+import { specs, swaggerUiExpress } from "./utils/swagger.js";
 
 // Importar Rutas
 import usersRoutes from "./routes/api/usersRouter.js";
@@ -41,6 +42,12 @@ const hbs = handlebars.create({
   helpers: {
     eq: function (a, b) {
       return a === b;
+    },
+    multiply: function (a, b) {
+      return a * b;
+    },
+    json: function (context) {
+      return JSON.stringify(context, null, 2);
     },
   },
   runtimeOptions: {
@@ -81,6 +88,7 @@ app.use("/api/tickets", ticketsRouter);
 app.use("/", viewsRouter);
 app.use("/api/mockingproducts", mockingProducts);
 app.use("/api/loggerTest", loggerTest);
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 // Inicializar servidor HTTP y configurar Socket.IO
 const httpServer = app.listen(PORT, () => {

@@ -1,40 +1,43 @@
-<div>
-  <h1>Detalles del carrito</h1>
-  {{#if cart.products.length}}
-    <ul>
+<h2>Detalle del Carrito</h2>
+
+{{#if cart.products.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
       {{#each cart.products}}
-        <li>
-          <p>Producto: {{this.product.title}}</p>
-          <p>Precio: ${{this.product.price}}</p>
-          <input
-            type="number"
-            id="quantity-{{this.product._id}}"
-            value="{{this.quantity}}"
-            style="width: 50px; height: auto"
-            ;
-            min="1"
-          />
-          <button
-            onclick="updateProductQuantity('{{cart._id}}', '{{this.product._id}}')"
-          > Agregar </button>
-
-          <button
-            onclick="removeProductFromCart('{{cart._id}}', '{{this.product._id}}')"
-          > Eliminar </button>
-        </li>
+        <tr>
+          <td>{{this.product.title}}</td>
+          <td>{{this.quantity}}</td>
+          <td>{{this.product.price}}</td>
+          <td>{{multiply this.quantity this.product.price}}</td>
+        </tr>
       {{/each}}
-    </ul>
-    <button id="purchaseButton" onclick="purchaseCart()">Realizar compra</button>
+    </tbody>
+  </table>
 
-    <button onclick="clearCart('{{cart._id}}')">Vaciar carrito</button>
-  {{else}}
-    <p>No hay productos en este carrito.</p>
-  {{/if}}
+  <hr />
 
-  <input type="hidden" id="cartId" value="{{cart._id}}" />
+  <h3>Resumen del Carrito</h3>
+  <p>Cantidad total de productos: {{totalQuantity}}</p>
+  <p>Total a pagar: ${{totalPrice}}</p>
 
-  <button onclick="location.href='/products'">Volver a productos</button>
-</div>
+  <button id="purchaseButton" onclick="purchaseCart()">Realizar compra</button>
+
+  <button onclick="clearCart('{{cart._id}}')">Vaciar carrito</button>
+{{else}}
+  <p>No hay productos en este carrito.</p>
+{{/if}}
+
+<input type="hidden" id="cartId" value="{{cart._id}}" />
+
+<button onclick="location.href='/products'">Volver a productos</button>
 
 <script src="/js/carts.js"></script>
 <script src="/js/products.js"></script>

@@ -113,3 +113,7 @@ async function purchaseCart() {
     alert("Error al realizar la compra.");
   }
 }
+
+function goToPurchaseSummary() {
+  window.location.href = "/purchase-summary";
+}

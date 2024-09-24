@@ -164,7 +164,7 @@ class CartService {
 
   async purchaseCart(cartId, userEmail) {
     try {
-      const cart = await this.getCartById(cartId);
+      const cart = await this.getCartById(cartId).populate("products.product");
       if (!cart) {
         throw new Error("Carrito no encontrado");
       }
