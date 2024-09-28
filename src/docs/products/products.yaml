@@ -2,8 +2,27 @@ paths:
   /api/products/:
     get:
       summary: Obtiene todos los productos
-      tags: 
-       - Products
+      tags:
+        - Products
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filtrar por categoría
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Ordenar por precio (asc o desc)
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Límite de resultados
       responses:
         "200":
           description: Una lista de productos
@@ -14,12 +33,11 @@ paths:
                 items:
                   $ref: "#/components/schemas/Product"
 
-
   /api/products/{id}:
     get:
       summary: Obtiene un producto por ID
-      tags: 
-       - Products
+      tags:
+        - Products
       parameters:
         - name: id
           in: path
@@ -36,8 +54,8 @@ paths:
 
     post:
       summary: Crea un nuevo producto
-      tags: 
-       - Products
+      tags:
+        - Products
       requestBody:
         required: true
         content:
@@ -47,11 +65,11 @@ paths:
       responses:
         "201":
           description: Producto creado con éxito
-          
+
     put:
       summary: Actualiza un producto por ID
-      tags: 
-       - Products
+      tags:
+        - Products
       parameters:
         - name: id
           in: path
@@ -70,8 +88,8 @@ paths:
 
     delete:
       summary: Elimina un producto por ID
-      tags: 
-       - Products
+      tags:
+        - Products
       parameters:
         - name: id
           in: path

@@ -63,18 +63,16 @@ export const getAllProducts = async (req, res) => {
 
 export const getProductById = async (req, res) => {
   try {
-    const productId = req.params.pid;
-    const product = await ProductService.getProductById(productId);
-
+    const { pid } = req.params;
+    const product = await ProductService.getProductById(pid);
     if (!product) {
       CustomError.createError({
         name: "ProductNotFoundError",
-        cause: `Producto con ID ${productId} no encontrado`,
+        cause: `Producto con ID ${product} no encontrado`,
         message: "Producto no encontrado",
         code: EErrors.ROUTING_ERROR,
       });
     }
-
     res.status(200).json({ result: "success", product });
   } catch (error) {
     logger.error("Error al obtener los detalles del producto:", error);
@@ -164,21 +162,29 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   const { pid } = req.params;
-
   try {
     const product = await ProductService.getProductById(pid);
+
     if (!product) {
       return res
         .status(404)
         .json({ result: "error", message: "Producto no encontrado" });
     }
 
-    const owner = await UsersMongoDAO.findOne({ email: product.owner });
-    if (!owner) {
-      return res.status(404).json({
-        result: "error",
-        message: "Propietario del producto no encontrado",
-      });
+    const ownerEmail = product.owner;
+    let owner;
+
+    if (ownerEmail === "admin") {
+      owner = { role: "admin", email: "admin" };
+    } else {
+      owner = await UsersMongoDAO.findOne({ email: ownerEmail });
+
+      if (!owner) {
+        return res.status(404).json({
+          result: "error",
+          message: "Propietario del producto no encontrado",
+        });
+      }
     }
 
     if (owner.role === "premium") {
@@ -208,7 +214,6 @@ export const deleteProduct = async (req, res) => {
 export const uploadImageProduct = async (req, res) => {
   try {
     const { pid } = req.params;
-
     const product = await ProductService.getProductById(pid);
 
     if (!product) {
@@ -224,15 +229,18 @@ export const uploadImageProduct = async (req, res) => {
       });
     }
 
-    product.thumbnail = req.file.path;
-    await ProductService.updateProduct(pid, { thumbnail: product.thumbnail });
+    const updatedProduct = await ProductService.updateProductImage(
+      pid,
+      req.file.path
+    );
 
     res.status(200).json({
       status: "success",
       message: "Imagen del producto actualizada",
-      productImage: product.thumbnail,
+      productImage: updatedProduct.thumbnail,
     });
   } catch (error) {
+    logger.error("Error al actualizar la imagen del producto:", error);
     res.status(500).json({
       status: "error",
       message: "Error al actualizar imagen del producto",

@@ -1,33 +1,48 @@
-let products = [];
+import productsModel from "../models/productsModel.js";
 
-export default class ProductMemoryDAO {
-  static findAll() {
-    return products;
-  }
-
-  static findById(id) {
-    return products.find((product) => product.id === id);
-  }
-
-  static create(product) {
-    products.push(product);
-    return product;
-  }
-
-  static update(id, updatedProduct) {
-    const index = products.findIndex((product) => product.id === id);
-    if (index !== -1) {
-      products[index] = { ...products[index], ...updatedProduct };
-      return products[index];
+class ProductsMongoDAO {
+  async getProducts(query, options) {
+    try {
+      return await productsModel.paginate(query, options);
+    } catch (error) {
+      throw new Error("Error al obtener productos");
     }
-    return null;
   }
 
-  static delete(id) {
-    const index = products.findIndex((product) => product.id === id);
-    if (index !== -1) {
-      return products.splice(index, 1)[0];
+  async getProductById(id) {
+    return await productsModel.findById(id);
+  }
+
+  async createProduct(productData) {
+    try {
+      const newProduct = new productsModel(productData);
+      return await newProduct.save();
+    } catch (error) {
+      throw new Error("Error al crear producto");
     }
-    return null;
+  }
+
+  async updateProduct(id, updateData) {
+    try {
+      return await productsModel.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
+    } catch (error) {
+      throw new Error("Error al actualizar producto");
+    }
+  }
+
+  async deleteProduct(id) {
+    try {
+      return await productsModel.findByIdAndDelete(id);
+    } catch (error) {
+      throw new Error("Error al eliminar producto");
+    }
+  }
+
+  async updateProduct(id, updateData) {
+    return await productsModel.findByIdAndUpdate(id, updateData, { new: true });
   }
 }
+
+export default new ProductsMongoDAO();

@@ -9,7 +9,7 @@ const swaggerOptions = {
       description: "API para documentar ecommerce del proyecto de backend",
     },
   },
-  apis: ['src/docs/**/*.yaml'],
+  apis: ['docs/**/*.yaml'],
 };
 
 const specs = swaggerJsdoc(swaggerOptions);

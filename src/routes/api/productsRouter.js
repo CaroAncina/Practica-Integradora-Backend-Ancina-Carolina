@@ -8,7 +8,7 @@ import {
   uploadImageProduct,
 } from "../../controllers/productsController.js";
 import { isAuthenticated, isAdminOrPremium } from "../../middleware/auth.js";
-import upload from "../../middleware/multer.js"; // Importa multer correctamente
+import upload from "../../middleware/multer.js";
 
 const router = Router();
 

@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { isAuthenticated, isUserOrPremium } from "../../middleware/auth.js";
+import {
+  isAuthenticated,
+  isUserOrPremium,
+  isAdmin,
+} from "../../middleware/auth.js";
 import {
   getCarts,
   getCartById,
@@ -12,7 +16,7 @@ import {
 
 const router = Router();
 
-router.get("/", isAuthenticated, isUserOrPremium, getCarts);
+router.get("/", isAuthenticated, isUserOrPremium, isAdmin, getCarts);
 router.get("/:cid", isAuthenticated, isUserOrPremium, getCartById);
 router.post(
   "/product/:pid",
