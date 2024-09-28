@@ -14,9 +14,21 @@
       {{#each cart.products}}
         <tr>
           <td>{{this.product.title}}</td>
-          <td>{{this.quantity}}</td>
+          <td>
+            <input
+              type="number"
+              id="quantity-{{this.product._id}}"
+              value="{{this.quantity}}"
+              min="1"
+            />
+          </td>
           <td>{{this.product.price}}</td>
           <td>{{multiply this.quantity this.product.price}}</td>
+          <td>
+            <button
+              onclick="updateProductQuantity('{{cart._id}}', '{{this.product._id}}')"
+            >Actualizar</button>
+          </td>
         </tr>
       {{/each}}
     </tbody>
@@ -28,7 +40,7 @@
   <p>Cantidad total de productos: {{totalQuantity}}</p>
   <p>Total a pagar: ${{totalPrice}}</p>
 
-  <button id="purchaseButton" onclick="purchaseCart()">Realizar compra</button>
+  <button id="purchaseButton" onclick="confirmPurchase()">Realizar compra</button>
 
   <button onclick="clearCart('{{cart._id}}')">Vaciar carrito</button>
 {{else}}
@@ -41,3 +53,4 @@
 
 <script src="/js/carts.js"></script>
 <script src="/js/products.js"></script>
+

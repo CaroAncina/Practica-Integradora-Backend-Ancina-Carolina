@@ -1,4 +1,5 @@
 import express from "express";
+import dotenv from "dotenv";
 import mongoose from "./config/database.js";
 import { Server } from "socket.io";
 import handlebars from "express-handlebars";
@@ -14,7 +15,6 @@ import errorHandler from "./middleware/errorhandler.js";
 import logger from "./utils/logger.js";
 import { specs, swaggerUiExpress } from "./utils/swagger.js";
 
-// Importar Rutas
 import usersRoutes from "./routes/api/usersRouter.js";
 import cartsRouter from "./routes/api/cartsRouter.js";
 import productsRouter from "./routes/api/productsRouter.js";
@@ -27,17 +27,16 @@ import loggerTest from "./routes/api/loggerTest.js";
 
 const app = express();
 const PORT = process.env.PORT;
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middleware para JSON, URL y archivos estáticos
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static("public/uploads"));
 
-// Handlebars
 const hbs = handlebars.create({
   helpers: {
     eq: function (a, b) {
@@ -60,25 +59,22 @@ app.engine("handlebars", hbs.engine);
 app.set("views", path.join(__dirname + "/views"));
 app.set("view engine", "handlebars");
 
-// Middleware de sesión
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB }),
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL }),
     cookie: { maxAge: 180 * 60 * 1000 },
   })
 );
 
-// Inicializar Passport
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
 app.use(errorHandler);
 
-// Rutas
 app.use("/api/users", usersRoutes);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
@@ -90,7 +86,6 @@ app.use("/api/mockingproducts", mockingProducts);
 app.use("/api/loggerTest", loggerTest);
 app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
-// Inicializar servidor HTTP y configurar Socket.IO
 const httpServer = app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
 });

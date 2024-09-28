@@ -100,6 +100,6 @@ Este proyecto es un backend para un ecommerce que permite la gestión de usuario
 
  - Link a documentación de Postman
 
-https://documenter.getpostman.com/view/34227122/2sA3s1osHX
+https://www.postman.com/lunar-module-cosmonaut-42040960/workspace/ecommerce-backend/collection/34227122-855468c3-c2e1-45f1-b511-559958d5d47f?action=share&creator=34227122
 
 ![alt text](<src/public/img readme/postman.png>)

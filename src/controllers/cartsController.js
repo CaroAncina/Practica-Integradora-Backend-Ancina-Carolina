@@ -184,6 +184,7 @@ export const purchaseCart = async (req, res) => {
     res.status(200).json({
       message: "Compra realizada con éxito",
       productsNotPurchased,
+      email: user.email,
     });
   } catch (error) {
     logger.error("Error al procesar la compra:", error);

@@ -99,9 +99,12 @@ async function purchaseCart() {
         "Content-Type": "application/json",
       },
     });
+
     if (response.ok) {
-      alert("Compra exitosa.");
-      location.reload();
+      alert(
+        "Compra exitosa.Se ha enviado un correo electrónico de confirmación."
+      );
+      window.location.href = "/products";
     } else if (response.status === 404) {
       alert("No se pudo realizar la compra.");
     } else {
@@ -116,4 +119,16 @@ async function purchaseCart() {
 
 function goToPurchaseSummary() {
   window.location.href = "/purchase-summary";
+}
+
+function confirmPurchase() {
+  const userConfirmed = confirm(
+    "¿Estás seguro de que deseas realizar la compra?"
+  );
+
+  if (userConfirmed) {
+    purchaseCart();
+  } else {
+    alert("Compra cancelada");
+  }
 }
