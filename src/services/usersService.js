@@ -189,10 +189,13 @@ class UserService {
         throw new Error("Usuario no encontrado");
       }
 
-      user.profileImage = imagePath;
-      await user.save();
+      const profile_image = await UserMongoDAO.update(
+        uid,
+        { profileImage: imagePath },
+        { new: true }
+      );
       logger.info(`Imagen de perfil actualizada para el usuario ${user.email}`);
-      return user;
+      return profile_image;
     } catch (error) {
       logger.error(`Error al subir imagen de perfil: ${error.message}`);
       throw new Error("Error al subir imagen de perfil");

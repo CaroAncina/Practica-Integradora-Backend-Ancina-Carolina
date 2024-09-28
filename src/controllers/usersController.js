@@ -135,7 +135,8 @@ export const changeUserRole = async (req, res) => {
 export const uploadProfileImage = async (req, res) => {
   try {
     const userId = req.user._id;
-    const profileImagePath = req.file.path;
+    const profileImagePath = `/uploads/profiles/${req.file.filename}`;
+
     const user = await UserService.uploadProfileImage(userId, profileImagePath);
     res.status(200).json({
       status: "success",

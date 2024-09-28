@@ -46,10 +46,10 @@ async function uploadProfileImage() {
 
     const result = await response.json();
     if (response.ok) {
-      alert(result.message);
-      window.location.reload();
+      alert(`Imagen de perfil actualizada`);
+      location.reload();
     } else {
-      alert(`Error: ${result.message}`);
+      alert(`Error al subir imágen de perfil: ${result.message}`);
     }
   } catch (error) {
     console.error("Error al subir la imagen de perfil:", error);
